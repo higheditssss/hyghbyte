@@ -1,0 +1,684 @@
+/* RESET */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background: #0a0a0a !important;
+  min-height: 100vh;
+  height: auto;
+  color: #d5d5d5;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* wrapper */
+.hb-shell {
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+/* HEADER */
+.hb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 5vw;
+  background: #0a0a0a;
+  border-bottom: 1px solid #111;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.9);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.hb-logo-main {
+  color: #ffffff;
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.hb-logo-sub {
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  color: #6a6a6a;
+  text-transform: uppercase;
+}
+
+.hb-header-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #222;
+  background: #111;
+  color: #d5d5d5;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: 0.15s;
+}
+.hb-header-btn:hover {
+  background: #1a1a1a;
+  transform: translateY(-2px);
+}
+
+.hb-random-btn {
+  background: linear-gradient(135deg, #ffffff, #d4d4d4);
+  border-color: #fff;
+  color: #000;
+  font-weight: 700;
+}
+
+/* MAIN */
+.hb-main {
+  padding: 24px 5vw 40px;
+  background: transparent !important;
+}
+
+.hb-layout {
+  display: grid;
+  grid-template-columns: 160px minmax(0,1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+/* SIDEBAR */
+.hb-sidebar {
+  background: #0d0d0d;
+  border-radius: 8px;
+  border: 1px solid #151515;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.9);
+  padding: 10px 6px 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 160px;
+  height: fit-content;
+  position: sticky;
+  top: 110px;
+}
+
+.hb-sidebar-title {
+  font-size: 0.75rem;
+  color: #6a6a6a;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  margin-bottom: 6px;
+}
+
+.hb-sidebar-item {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #d5d5d5;
+  font-size: 0.85rem;
+  padding: 6px 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: 0.12s ease-out;
+}
+.hb-sidebar-item:hover {
+  background: #161616;
+}
+.hb-sidebar-item.is-active {
+  background: linear-gradient(90deg, #1a1a1a, #222);
+  color: #fff;
+}
+
+/* DOTS */
+.hb-sidebar-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.hb-sidebar-dot.all { background: #fff; }
+.hb-sidebar-dot.steam { background: #7aa2ff; }
+.hb-sidebar-dot.itch { background: #ff5f7e; }
+
+/* CONTENT */
+.hb-steam-titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.hb-steam-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.hb-games-count {
+  font-size: 0.85rem;
+  color: #6a6a6a;
+}
+
+/* GRID */
+.hb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px,1fr));
+  gap: 18px;
+}
+
+/* CARD */
+.hb-card {
+  background: #101010;
+  border-radius: 8px;
+  border: 1px solid #1b1b1b;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: 0.25s;
+}
+.hb-card:hover {
+  transform: translateY(-4px);
+  border-color: #444;
+  box-shadow: 0 14px 36px rgba(0,0,0,0.95);
+}
+
+/* IMAGE */
+.hb-card-image-wrap {
+  position: relative;
+  padding-top: 55%;
+  overflow: hidden;
+}
+.hb-card-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hb-card-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #050505;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+/* PRICE BADGE */
+.hb-price-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: rgba(0,0,0,0.7);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.hb-price-free { color: #9cff9c; }
+.hb-price-paid { color: #ffd28c; }
+
+/* BODY */
+.hb-card-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.hb-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.hb-card-genres {
+  font-size: 0.78rem;
+  color: #888;
+  margin-bottom: 12px;
+}
+
+/* BOTTOM */
+.hb-card-bottom {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hb-button {
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  border: none;
+  cursor: pointer;
+}
+
+.hb-button-primary {
+  background: #ff2a39;
+  color: #fff;
+  font-weight: 700;
+}
+.hb-button-primary:hover {
+  background: #ff3d4d;
+}
+
+.hb-source-icon {
+  width: 28px;
+  height: 28px;
+}
+
+/* FOOTER */
+.hb-footer {
+  padding: 18px 0 30px;
+  text-align: center;
+  color: #777;
+  font-size: 0.75rem;
+  border-top: 1px solid #111;
+  margin-top: 60px;
+}
+
+.hb-footer-text {
+  opacity: 0.75;
+}
+
+/* CASE OPENING */
+.case-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+}
+
+.case-box {
+  width: 90vw;
+  max-width: 1100px;
+  height: 210px;
+  background: #0d0d0d;
+  border-radius: 14px;
+  border: 2px solid #fff;
+  overflow: hidden;
+  position: relative;
+}
+
+.case-strip { display: flex; }
+
+.case-item {
+  flex: 0 0 220px;
+  height: 210px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #111;
+}
+
+.case-item-inner {
+  text-align: center;
+}
+
+.case-item-img {
+  width: 200px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.case-item-title {
+  font-size: 0.82rem;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* marker */
+.case-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 3px;
+  background: rgba(255,255,255,0.45);
+  transform: translateX(-50%);
+}
+
+.case-item.winner {
+  background: radial-gradient(circle, #fff 0%, #444 70%, #111 100%);
+  box-shadow: inset 0 0 36px rgba(255,255,255,0.8);
+  color: #000;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .hb-layout {
+    grid-template-columns: minmax(0,1fr);
+  }
+  .hb-sidebar {
+    flex-direction: row;
+    width: 100%;
+    position: static;
+    overflow-x: auto;
+    padding: 10px;
+  }
+}
+
+/* --- restul adminului și music-bar le păstrăm exact ca înainte --- */
+/* =========================================================
+   ===============  ADMIN STYLES (LOGIN + PANEL) ===========
+   ========================================================= */
+
+/* LOGIN CARD */
+.admin-login-card {
+  max-width: 380px;
+  margin: 80px auto;
+  background: #0d0d0d;
+  padding: 30px 26px;
+  border-radius: 14px;
+  border: 1px solid #33000d;
+  box-shadow: 0 0 25px rgba(255,0,46,0.18);
+}
+
+.admin-login-error {
+  background: #240006;
+  color: #ff3355;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #550014;
+  font-size: 0.85rem;
+}
+
+/* ADMIN LAYOUT */
+.admin-container {
+  max-width: 1100px;
+  margin: 32px auto 40px;
+  padding: 0 20px 40px;
+}
+
+.admin-card {
+  background: #0c0c0c;
+  padding: 20px 20px 22px;
+  border-radius: 12px;
+  border: 1px solid #1f1f1f;
+  margin-bottom: 26px;
+  box-shadow: 0 16px 38px rgba(0,0,0,0.85);
+}
+
+.admin-card h2,
+.admin-title {
+  margin-bottom: 14px;
+  color: #ff3355;
+  font-size: 1.05rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* GRID FORM */
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px 18px;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  color: var(--grey-main);
+}
+
+.admin-field label {
+  margin-bottom: 4px;
+}
+
+/* Inputs doar în admin ca să nu stric restul site-ului */
+.admin-input,
+.admin-field input[type="text"],
+.admin-field input[type="url"],
+.admin-field select {
+  width: 100%;
+  padding: 9px 10px;
+  background: #161616;
+  border-radius: 8px;
+  border: 1px solid #333;
+  color: #f3f3f3;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.admin-field input:focus,
+.admin-field select:focus {
+  border-color: #ff3355;
+  box-shadow: 0 0 0 1px rgba(255,51,85,0.4);
+}
+
+/* Radio group */
+.admin-radio-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 0.82rem;
+}
+.admin-radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Buttons */
+.admin-btn {
+  background: #ff0030;
+  color: #fff;
+  border-radius: 999px;
+  padding: 9px 22px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.admin-btn:hover {
+  background: #ff3355;
+}
+
+.admin-submit {
+  grid-column: 1 / -1;
+  justify-self: flex-start;
+}
+
+.admin-edit-btn {
+  background: #262626;
+  padding: 6px 14px;
+  font-size: 0.75rem;
+}
+.admin-edit-btn:hover {
+  background: #3a3a3a;
+}
+
+.admin-delete-btn {
+  background: #7b111c;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+}
+.admin-delete-btn:hover {
+  background: #a21625;
+}
+
+/* logout / danger style compatibil cu hb-header-btn */
+.hb-danger-btn {
+  background: #a53b3b;
+  border-color: #592020;
+  color: #fff;
+}
+.hb-danger-btn:hover {
+  background: #c04747;
+}
+
+/* Snow & lights toggles text */
+.admin-toggle-label {
+  font-size: 0.88rem;
+  color: var(--grey-main);
+}
+
+/* TABLE */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #080808;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #1c1c1c;
+  font-size: 0.86rem;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.admin-table thead th {
+  background: #151515;
+  color: #ff3355;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  border-bottom: 1px solid #262626;
+}
+
+.admin-table tbody tr:nth-child(even) {
+  background: #101010;
+}
+
+.admin-table tbody tr:nth-child(odd) {
+  background: #0b0b0b;
+}
+
+.admin-table tbody tr:hover {
+  background: #1a1a1a;
+}
+
+.admin-table a {
+  color: #ff6f8a;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+.admin-table a:hover {
+  text-decoration: underline;
+}
+
+/* Small badge-style source text */
+.admin-source-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  background: #181818;
+}
+
+/* ADMIN RESPONSIVE */
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 0 14px 30px;
+  }
+
+  .admin-card {
+    padding: 16px 14px 18px;
+  }
+
+  .admin-table {
+    font-size: 0.8rem;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 8px 8px;
+  }
+}
+
+/* ===== MUSIC BAR ===== */
+.music-bar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 14px;
+  z-index: 9999;
+  background: rgba(8,8,8,0.96);
+  border-radius: 999px;
+  border: 1px solid #2a2a2a;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+}
+
+.music-btn {
+  border: none;
+  background: #ff2a39;
+  color: #fff;
+  border-radius: 999px;
+  width: 26px;
+  height: 26px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.music-btn:hover {
+  background: #ff3d4d;
+}
+
+.music-title {
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.music-volume {
+  width: 110px;
+}
+
+/* container YouTube ascuns (audio only) */
+#ytPlayerContainer {
+  position: fixed;
+  left: -9999px;
+  top: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+/* === FOOTER LA BAZA PAGINII === */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.hb-main {
+    flex: 1; /* împinge footerul în jos */
+}

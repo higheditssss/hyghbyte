@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <title>ADMIN — HYGHBYTE</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+
+<body>
+
+<header class="hb-header">
+  <div class="hb-header-left">
+    <span class="hb-logo-main">HYGHBYTE</span>
+    <span class="hb-logo-sub">ADMIN</span>
+  </div>
+
+  <form method="POST" action="/admin/logout" class="hb-header-right">
+    <button class="hb-header-btn hb-danger-btn">Logout</button>
+  </form>
+</header>
+
+<div class="admin-container">
+
+  <!-- ADD GAME -->
+  <div class="admin-card">
+    <h2>Adaugă joc</h2>
+
+    <form method="POST" action="/admin/games" class="admin-grid">
+
+      <div class="admin-field">
+        <label>Sursă</label>
+        <select name="source" id="sourceSelect">
+          <option value="steam">Steam</option>
+          <option value="itch">itch.io</option>
+          <option value="manual">Manual</option>
+        </select>
+      </div>
+
+      <!-- Steam Only -->
+      <div class="admin-field steam-only">
+        <label>Steam ID</label>
+        <input type="text" name="steamId" />
+      </div>
+
+      <div class="admin-field steam-only">
+        <label>Mod Steam</label>
+        <select name="steamMode">
+          <option value="auto">Auto</option>
+          <option value="manual">Manual</option>
+        </select>
+      </div>
+
+      <div class="admin-field">
+        <label>Titlu</label>
+        <input type="text" name="title" />
+      </div>
+
+      <div class="admin-field">
+        <label>Link joc</label>
+        <input type="url" name="link" placeholder="https://..." />
+      </div>
+
+      <div class="admin-field">
+        <label>Cover URL (GIF/JPG/PNG)</label>
+        <input type="url" name="imageUrl" placeholder="https://... .gif" />
+      </div>
+
+      <div class="admin-field">
+        <label>Genuri</label>
+        <input type="text" name="genres" />
+      </div>
+
+      <button class="admin-btn admin-submit">Adaugă joc</button>
+
+    </form>
+  </div>
+
+  <!-- GAME LIST -->
+  <div class="admin-card">
+    <h2>Jocuri existente</h2>
+
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Titlu</th>
+          <th>Sursă</th>
+          <th>Cover</th>
+          <th>Șterge</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% games.forEach(g => { %>
+          <tr>
+            <td><%= g.id %></td>
+            <td><%= g.title %></td>
+            <td><%= g.source %></td>
+            <td>
+              <% if (g.imageUrl) { %>
+                <img src="<%= g.imageUrl %>" width="60">
+              <% } %>
+            </td>
+            <td>
+              <form method="POST" action="/admin/games/<%= g.id %>/delete">
+                <button class="admin-delete-btn">X</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+const srcSel = document.getElementById("sourceSelect");
+const steamOnly = document.querySelectorAll(".steam-only");
+
+function updateSteam() {
+  steamOnly.forEach(el => {
+    el.style.display = srcSel.value === "steam" ? "block" : "none";
+  });
+}
+updateSteam();
+srcSel.addEventListener("change", updateSteam);
+</script>
+
+</body>
+</html>

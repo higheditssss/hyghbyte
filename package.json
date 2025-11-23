@@ -1,0 +1,16 @@
+{
+  "name": "hyghbyte",
+  "version": "1.0.0",
+  "description": "HYGHBYTE - Retro modern game showcase",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "node-fetch": "^3.3.2",
+    "sqlite3": "^5.1.7"
+  }
+}

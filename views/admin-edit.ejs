@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <title>HYGHBYTE // Edit Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+
+<body>
+
+<header class="hb-header">
+  <div class="hb-header-left">
+    <span class="hb-logo-main">HYGHBYTE</span>
+    <span class="hb-logo-sub">EDIT GAME</span>
+  </div>
+
+  <div class="hb-header-right">
+    <button id="themeToggle" class="hb-header-btn">🌙</button>
+    <a href="/admin" class="hb-header-btn">⟵ Înapoi la admin</a>
+  </div>
+</header>
+
+<main class="admin-container">
+  <section class="admin-card">
+    <h2 class="admin-title">Editează joc: <%= game.title %></h2>
+
+    <form method="POST" action="/admin/games/<%= game.id %>/edit" class="admin-grid">
+
+      <div class="admin-field">
+        <label>Titlu</label>
+        <input type="text" name="title" class="admin-input" value="<%= game.title %>">
+      </div>
+
+      <div class="admin-field">
+        <label>Link</label>
+        <input type="url" name="link" class="admin-input" value="<%= game.link || '' %>">
+      </div>
+
+      <div class="admin-field">
+        <label>URL poză</label>
+        <input type="url" name="imageUrl" class="admin-input" value="<%= game.imageUrl || '' %>">
+      </div>
+
+      <div class="admin-field">
+        <label>Genuri</label>
+        <input type="text" name="genres" class="admin-input" value="<%= game.genres || '' %>">
+      </div>
+
+      <div class="admin-field">
+        <label>Preț</label>
+        <select name="priceType" class="admin-input">
+          <option value="free" <%= game.priceType === 'free' ? 'selected' : '' %>>FREE</option>
+          <option value="paid" <%= game.priceType === 'paid' ? 'selected' : '' %>>PAID</option>
+        </select>
+      </div>
+
+      <button type="submit" class="admin-btn admin-submit">
+        Salvează modificările
+      </button>
+    </form>
+  </section>
+</main>
+
+<script>
+const btn = document.getElementById("themeToggle");
+
+function setTheme(m){
+  document.body.classList.toggle("light", m==="light");
+  btn.innerHTML = m==="light" ? "🌙" : "☀️";
+  localStorage.setItem("hyghbyteTheme", m);
+}
+setTheme(localStorage.getItem("hyghbyteTheme") || "dark");
+
+btn.addEventListener("click", () => {
+  setTheme(document.body.classList.contains("light") ? "dark":"light");
+});
+</script>
+
+</body>
+</html>

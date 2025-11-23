@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <title>HYGHBYTE // Admin Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+
+<body>
+
+<header class="hb-header">
+  <div>
+    <span class="hb-logo-main">HYGHBYTE</span>
+    <span class="hb-logo-sub">ADMIN LOGIN</span>
+  </div>
+
+  <div class="hb-header-right">
+    <button id="themeToggle" class="hb-header-btn">🌙</button>
+  </div>
+</header>
+
+<div class="admin-login-card">
+
+  <% if (error) { %>
+    <div class="admin-login-error">
+      <%= error %>
+    </div>
+  <% } %>
+
+  <form method="POST" action="/admin/login" style="display:flex; flex-direction:column; gap:18px;">
+    <label style="color:#ccc; font-size:0.85rem;">
+      Parolă
+      <input type="password" name="password" required
+        style="width:100%; padding:12px; margin-top:6px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:white;">
+    </label>
+
+    <button type="submit" class="admin-btn" style="margin-top:8px;">Intră</button>
+  </form>
+</div>
+
+<script>
+  const toggleBtn = document.getElementById("themeToggle");
+
+  function setTheme(mode) {
+    if (mode === "light") {
+      document.body.classList.add("light");
+      toggleBtn.innerHTML = "🌙";
+    } else {
+      document.body.classList.remove("light");
+      toggleBtn.innerHTML = "☀️";
+    }
+    localStorage.setItem("hyghbyteTheme", mode);
+  }
+
+  const saved = localStorage.getItem("hyghbyteTheme") || "dark";
+  setTheme(saved);
+
+  toggleBtn.addEventListener("click", () => {
+    const newTheme = document.body.classList.contains("light") ? "dark" : "light";
+    setTheme(newTheme);
+  });
+</script>
+
+</body>
+</html>
