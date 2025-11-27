@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Panel — HYGHBYTE</title>
+  <title>HyghByte Admin</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 
@@ -10,59 +10,68 @@
 
 <div class="admin-wrapper">
 
+  <!-- ========================= ADD GAME ========================= -->
   <div class="admin-card">
     <h2>Adaugă joc</h2>
 
     <% if (error) { %>
-      <p style="color:#ff4d6d;"><%= error %></p>
+      <p style="color:#ff4d6d; font-weight:700;"><%= error %></p>
     <% } %>
 
     <form class="admin-form" action="/addGame" method="POST">
 
-      <label>Source</label>
+      <!-- SOURCE SELECT -->
+      <label>Sursa jocului</label>
       <select name="source" onchange="toggleInputs(this.value)">
-        <option value="steam">Steam</option>
-        <option value="itch">itch.io</option>
+        <option value="steam">Steam (Steam ID)</option>
+        <option value="itch">itch.io (link)</option>
         <option value="manual">Manual</option>
       </select>
 
+      <!-- STEAM -->
       <div id="steamField">
         <label>Steam App ID</label>
         <input type="text" name="steamId" placeholder="Ex: 730">
       </div>
 
+      <!-- ITCH.IO -->
       <div id="itchField" style="display:none;">
-        <label>itch.io Link</label>
-        <input type="text" name="itchLink" placeholder="https://itch.io/...">
+        <label>itch.io link</label>
+        <input type="text" name="itchLink" placeholder="https://itch.io/game">
       </div>
 
+      <!-- MANUAL MODE -->
       <div id="manualFields" style="display:none;">
-        <label>Titlu</label>
-        <input type="text" name="title">
+        <label>Titlu joc</label>
+        <input type="text" name="title" placeholder="Game Title">
 
-        <label>Genres</label>
-        <input type="text" name="genres">
+        <label>Genuri</label>
+        <input type="text" name="genres" placeholder="Action, Adventure">
 
-        <label>Imagine</label>
-        <input type="text" name="imageUrl">
+        <label>Imagine (URL)</label>
+        <input type="text" name="imageUrl" placeholder="https://...">
 
         <label>Play URL</label>
-        <input type="text" name="playUrl">
+        <input type="text" name="playUrl" placeholder="https://...">
       </div>
 
       <button class="admin-btn">Adaugă joc</button>
     </form>
-
   </div>
 
+
+  <!-- ========================= GAME LIST ========================= -->
   <div class="admin-card">
-    <h2>Jocuri</h2>
+    <h2>Lista jocuri</h2>
 
     <form action="/updateFeatured" method="POST">
       <div class="admin-games-grid">
 
         <% games.forEach(g => { %>
+
           <div class="admin-game-card">
+
+            <!-- imagine -->
             <% if (g.imageurl) { %>
               <img src="<%= g.imageurl %>">
             <% } else { %>
@@ -71,30 +80,51 @@
 
             <div class="agc-info">
               <h3><%= g.title %></h3>
-              <p><%= g.genres %></p>
+              <% if (g.genres) { %>
+                <p><%= g.genres %></p>
+              <% } %>
             </div>
 
+            <!-- featured toggle -->
             <div class="admin-check">
               <label>Featured</label>
               <input type="checkbox" name="featured" value="<%= g.id %>" <%= g.featured ? "checked" : "" %>>
             </div>
 
-            <form action="/deleteGame/<%= g.id %>" method="POST">
-              <button style="width:100%;padding:10px;margin-top:10px;background:#ff355c;border:none;color:white;border-radius:8px;">Șterge</button>
+            <!-- delete button -->
+            <form method="POST" action="/deleteGame/<%= g.id %>">
+              <button
+                type="submit"
+                style="
+                  width:100%;
+                  padding:10px;
+                  background:#ff3c5a;
+                  border:none;
+                  border-radius:6px;
+                  color:white;
+                  font-weight:700;
+                  margin-top:10px;
+                  cursor:pointer;">
+                Șterge
+              </button>
             </form>
 
           </div>
+
         <% }) %>
 
       </div>
 
-      <button class="admin-btn">Salvează Featured</button>
+      <button class="admin-btn" style="margin-top:20px;">Salvează Featured</button>
+
     </form>
 
   </div>
 
 </div>
 
+
+<!-- ========================= JS: SOURCE SWITCH ========================= -->
 <script>
 function toggleInputs(src) {
   document.getElementById("steamField").style.display = src === "steam" ? "block" : "none";
