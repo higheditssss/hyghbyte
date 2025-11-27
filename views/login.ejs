@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Login — HYGHBYTE</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    body {
+      background: #0c0d0f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+      font-family: "Inter", sans-serif;
+    }
+
+    .login-box {
+      width: 360px;
+      padding: 30px;
+      background: #111317;
+      border: 1px solid #1f2226;
+      border-radius: 10px;
+    }
+
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: 700;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      background: #1b1d21;
+      border: 1px solid #2a2d31;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background: #ff3355;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .login-box button:hover {
+      background: #ff4d6d;
+    }
+  </style>
+</head>
+<body>
+
+  <form class="login-box" method="POST" action="/admin/login">
+    <h2>Admin Login</h2>
+
+    <input type="password" name="password" placeholder="Parolă admin" required>
+
+    <button type="submit">Intră în admin</button>
+  </form>
+
+</body>
+</html>

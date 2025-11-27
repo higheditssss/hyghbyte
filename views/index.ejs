@@ -9,229 +9,190 @@
 
 <body>
 
-<!-- 🎄 LUMINI DE CRĂCIUN -->
-<% if (settings.lightsMode && settings.lightsMode !== "off") { %>
-  <div class="christmas-lights <%= settings.lightsMode %>"></div>
-<% } %>
-
-<!-- HEADER -->
 <header class="hb-header">
-  <div class="hb-header-left">
+  <div>
     <span class="hb-logo-main">HYGHBYTE</span>
     <span class="hb-logo-sub">GAME VAULT</span>
   </div>
 
   <div class="hb-header-right">
-    <button id="themeToggle" class="hb-header-btn">🌙</button>
-    <button id="randomBtn" class="hb-header-btn hb-random-btn">🎲 Random game</button>
+    <a href="https://highstatss.vercel.app/" target="_blank" class="hb-kick-btn">HIGHSTATS</a>
+    <button id="caseBtn" class="hb-random-btn">🎁 Open Case</button>
   </div>
 </header>
 
-<!-- ❄️ NINSOARE -->
-<% if (settings.snow) { %>
-  <script src="/snow-v3.js"></script>
-<% } %>
-
 <main class="hb-main">
-  <div class="hb-shell hb-layout">
 
-    <!-- SIDEBAR -->
-    <aside class="hb-sidebar">
-      <div class="hb-sidebar-section">
-        <div class="hb-sidebar-title">LIBRARY</div>
+  <!-- ======================= FEATURED + SIDEBAR INLINE ======================= -->
+  <section class="featured-section">
+    <h2 class="featured-title">Featured Games</h2>
+
+    <div class="featured-with-sidebar">
+
+      <!-- === Sidebar Mutat Lângă Featured === -->
+      <aside class="hb-sidebar sidebar-inline">
+        <div class="hb-sidebar-title">Library</div>
 
         <button class="hb-sidebar-item is-active" data-filter="all">
-          <span class="hb-sidebar-dot all"></span>
-          Toate jocurile
+          <span class="hb-sidebar-dot all"></span> Toate jocurile
         </button>
-      </div>
-
-      <div class="hb-sidebar-section">
-        <div class="hb-sidebar-title">SURSE</div>
 
         <button class="hb-sidebar-item" data-filter="steam">
-          <span class="hb-sidebar-dot steam"></span>
-          Steam
+          <span class="hb-sidebar-dot steam"></span> Steam
         </button>
 
         <button class="hb-sidebar-item" data-filter="itch">
-          <span class="hb-sidebar-dot itch"></span>
-          itch.io
+          <span class="hb-sidebar-dot itch"></span> itch.io
         </button>
-      </div>
-    </aside>
+      </aside>
 
-    <!-- CONTENT -->
-    <section class="hb-content">
+      <!-- === FEATURED SLIDER === -->
+      <div class="featured-slider">
+        <button id="featured-prev" class="featured-arrow left">❮</button>
 
-      <!-- CASE OPENING -->
-      <div id="caseOverlay" class="case-overlay" style="display:none;">
-        <div class="case-box" id="caseBox">
-          <div class="case-strip" id="caseStrip"></div>
-          <div class="case-marker"></div>
-        </div>
-      </div>
+        <div id="featured-container">
+          <% featuredGames.forEach((g, index) => { %>
+            <div class="featured-slide <%= index === 0 ? 'active' : '' %>"
+                 style="--bg:url('<%= g.featuredImage || g.imageUrl %>')">
 
-      <div class="hb-steam-titlebar">
-        <h2 class="hb-steam-title">Biblioteca de jocuri</h2>
-        <span class="hb-games-count"><%= games.length %> titluri</span>
-      </div>
+              <img src="<%= g.featuredImage || g.imageUrl %>" class="featured-big-img">
 
-      <!-- GRID -->
-      <div class="hb-grid">
-        <% games.forEach(game => { %>
-          <article class="hb-card" data-source="<%= game.source %>">
+              <div class="featured-right">
+                <h3><%= g.title %></h3>
 
-            <div class="hb-card-image-wrap">
-              <% if (game.imageUrl) { %>
-                <img 
-                  src="<%= game.imageUrl %>" 
-                  class="hb-card-image"
-                  alt="<%= game.title %>"
-                  loading="lazy"
-                >
-              <% } else { %>
-                <div class="hb-card-placeholder">HYGHBYTE</div>
-              <% } %>
-            </div>
-
-            <div class="hb-card-body">
-              <h3 class="hb-card-title"><%= game.title %></h3>
-
-              <% if (game.genres) { %>
-                <p class="hb-card-genres"><%= game.genres %></p>
-              <% } %>
-
-              <div class="hb-card-bottom">
-
-                <% if (game.playUrl) { %>
-                  <a href="<%= game.playUrl %>" target="_blank" class="hb-button hb-button-primary">
-                    ▶ Joacă
-                  </a>
+                <% if (g.genres) { %>
+                  <p class="featured-genres"><%= g.genres %></p>
                 <% } %>
 
-                <div class="hb-source-wrapper">
-                  <% if (game.source === 'steam') { %>
-                    <img 
-                      src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg"
-                      class="hb-source-icon"
-                      alt="Steam"
-                      loading="lazy"
-                    >
-                  <% } else if (game.source === 'itch') { %>
-                    <img 
-                      src="https://img.icons8.com/ios11/600/FA5252/itch-io.png"
-                      class="hb-source-icon"
-                      alt="itch.io"
-                      loading="lazy"
-                    >
-                  <% } %>
-                </div>
-
+                <a href="<%= g.playUrl %>" class="featured-play-btn" target="_blank">
+                  ▶ Joacă acum
+                </a>
               </div>
             </div>
+          <% }) %>
+        </div>
 
-          </article>
-        <% }) %>
+        <button id="featured-next" class="featured-arrow right">❯</button>
       </div>
 
-    </section>
-  </div>
+    </div>
+  </section>
+
+  <!-- ======================= GAME GRID (NORMAL) ======================= -->
+  <section class="hb-content">
+    <div class="hb-grid">
+
+      <% games.forEach(g => { %>
+        <article class="hb-card" data-source="<%= g.source %>">
+          <div class="hb-card-image-wrap">
+            <img src="<%= g.imageUrl %>" class="hb-card-image">
+          </div>
+
+          <div class="hb-card-body">
+            <h3 class="hb-card-title"><%= g.title %></h3>
+
+            <% if (g.genres) { %>
+              <p class="hb-card-genres"><%= g.genres %></p>
+            <% } %>
+
+            <div class="hb-card-bottom">
+              <a href="<%= g.playUrl %>" target="_blank" class="hb-button-primary">
+                ▶ Joacă
+              </a>
+
+              <% if (g.source === 'steam') { %>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg"
+                     class="hb-source-icon">
+              <% } else if (g.source === 'itch') { %>
+                <img src="https://static-00.iconduck.com/assets.00/itch-io-icon-2048x2048-7q3p8x7n.png"
+                     class="hb-source-icon">
+              <% } %>
+            </div>
+          </div>
+        </article>
+      <% }) %>
+
+    </div>
+  </section>
+
 </main>
 
 <footer class="hb-footer">
-  <div class="hb-shell hb-footer-inner">
-    <span class="hb-footer-text">
-      HYGHBYTE nu este afiliat cu Steam, itch.io sau Valve Corporation. Toate mărcile aparțin deținătorilor lor.
-    </span>
-  </div>
+  HYGHBYTE 2025 — Not affiliated with Steam or itch.io.
 </footer>
 
+<!-- ======================= CASE OPENING POPUP ======================= -->
+<div id="casePopup" class="case-popup hidden">
+  <div class="case-strip-container">
+    <div id="caseStrip" class="case-strip"></div>
+  </div>
+</div>
+
+<!-- ======================= FEATURED SLIDER SCRIPT ======================= -->
 <script>
-// ===== THEME =====
-const themeBtn = document.getElementById("themeToggle");
-function setTheme(mode) {
-  document.body.classList.toggle("light", mode === "light");
-  themeBtn.innerHTML = mode === "light" ? "🌙" : "☀️";
-  localStorage.setItem("hyghbyteTheme", mode);
-}
-setTheme(localStorage.getItem("hyghbyteTheme") || "dark");
-themeBtn.addEventListener("click", () => {
-  setTheme(document.body.classList.contains("light") ? "dark" : "light");
-});
+  const slides = document.querySelectorAll(".featured-slide");
+  let index = 0;
 
-// ===== LISTĂ RANDOM =====
-const gamesList = JSON.parse(`<%- JSON.stringify(games.map(g => ({
-  title: g.title,
-  url: g.playUrl,
-  image: g.imageUrl || "/fallback.png"
-}))) %>`);
+  function showSlide(i) {
+    slides.forEach(s => s.classList.remove("active"));
+    slides[i].classList.add("active");
+  }
 
-// ===== CASE OPENING =====
-const randomBtn = document.getElementById("randomBtn");
-const overlay = document.getElementById("caseOverlay");
-const strip = document.getElementById("caseStrip");
-const box = document.getElementById("caseBox");
+  if (slides.length > 0) {
+    document.getElementById("featured-prev").onclick = () => {
+      index = (index - 1 + slides.length) % slides.length;
+      showSlide(index);
+    };
 
-randomBtn.addEventListener("click", () => {
-  if (!gamesList.length) return;
+    document.getElementById("featured-next").onclick = () => {
+      index = (index + 1) % slides.length;
+      showSlide(index);
+    };
+  }
+</script>
 
-  const winner = gamesList[Math.floor(Math.random() * gamesList.length)];
-  const seq = [];
+<!-- ======================= CASE OPENING SCRIPT ======================= -->
+<script>
+const allGames = <%- JSON.stringify(games) %>;
+const caseBtn = document.getElementById("caseBtn");
 
-  for (let i = 0; i < 12; i++) seq.push(gamesList[Math.floor(Math.random() * gamesList.length)]);
-  seq.push(winner);
-  for (let i = 0; i < 12; i++) seq.push(gamesList[Math.floor(Math.random() * gamesList.length)]);
+function openCase() {
+  if (!allGames || allGames.length === 0) return;
 
+  const popup = document.getElementById("casePopup");
+  const strip = document.getElementById("caseStrip");
+
+  popup.classList.remove("hidden");
   strip.innerHTML = "";
-  seq.forEach((g, i) => {
-    const d = document.createElement("div");
-    d.className = "case-item";
-    d.innerHTML = `
-      <div class="case-item-inner">
-        <img class="case-item-img" src="${g.image}" loading="lazy">
-        <div class="case-item-title">${g.title}</div>
-      </div>`;
-    if (i === 12) d.dataset.winner = true;
-    strip.appendChild(d);
-  });
-
-  overlay.style.display = "flex";
-
   strip.style.transition = "none";
   strip.style.transform = "translateX(0)";
-  void strip.offsetWidth;
 
-  const w = strip.children[0].offsetWidth;
-  const bw = box.offsetWidth;
+  const rollList = [];
+  for (let i = 0; i < 55; i++) {
+    const g = allGames[Math.floor(Math.random() * allGames.length)];
+    rollList.push(g);
 
-  const target = (12 * w) - (bw / 2) + (w / 2);
+    const img = document.createElement("img");
+    img.src = g.imageUrl;
+    strip.appendChild(img);
+  }
 
-  strip.style.transition = "transform 3.2s cubic-bezier(.1,.35,.08,1)";
-  strip.style.transform = `translateX(-${target}px)`;
+  const winner = rollList[rollList.length - 1];
+
+  const itemWidth = 230 + 12;
+  const totalMove = (rollList.length - 4) * itemWidth;
 
   setTimeout(() => {
-    strip.querySelector("[data-winner]").classList.add("winner");
-    setTimeout(() => {
-      overlay.style.display = "none";
-      if (winner.url) window.open(winner.url, "_blank");
-    }, 1000);
-  }, 3300);
-});
+    strip.style.transition = "transform 3s cubic-bezier(0.1, 0.7, 0.2, 1)";
+    strip.style.transform = `translateX(-${totalMove}px)`;
+  }, 50);
 
-// ===== FILTER =====
-document.querySelectorAll(".hb-sidebar-item[data-filter]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const f = btn.dataset.filter;
+  setTimeout(() => {
+    window.location.href = winner.playUrl;
+  }, 3100);
+}
 
-    document.querySelectorAll(".hb-sidebar-item").forEach(b => b.classList.remove("is-active"));
-    btn.classList.add("is-active");
-
-    document.querySelectorAll(".hb-card").forEach(c => {
-      c.style.display = (f === "all" || c.dataset.source === f) ? "" : "none";
-    });
-  });
-});
+caseBtn.addEventListener("click", openCase);
 </script>
 
 </body>
