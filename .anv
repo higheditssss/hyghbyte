@@ -1,0 +1,2 @@
+postgresql:postgresql://postgres:dEdmvfoWfHmZNFGjwazzqCZzbUrrEESh@postgres.railway.internal:5432/railway
+SESSION_SECRET=HyghByte_2025!$Rsa
