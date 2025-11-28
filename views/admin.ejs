@@ -12,6 +12,7 @@
 
 <div class="admin-wrapper">
 
+  <!-- ADD GAME PANEL -->
   <div class="admin-card">
       <h2>Adaugă joc</h2>
 
@@ -21,55 +22,51 @@
 
       <form action="/addGame" method="POST" class="admin-form">
 
-          <!-- SELECT PLATFORM -->
+          <!-- SELECT SOURCE -->
           <div class="form-group">
-              <label>Sursa:</label>
+              <label>Sursă joc:</label>
               <select name="source" id="sourceSelect" onchange="toggleFields()">
-                  <option value="steam">Steam (ID automat)</option>
+                  <option value="steam">Steam (doar ID)</option>
                   <option value="itch">itch.io (manual)</option>
               </select>
           </div>
 
-          <!-- STEAM SECTION -->
+          <!-- STEAM ONLY INPUT -->
           <div id="steamFields">
-              <div class="form-group">
-                  <label>Steam ID:</label>
-                  <input type="text" name="steamId" placeholder="Ex: 730">
-              </div>
+              <label>Steam App ID:</label>
+              <input type="text" name="steamId" placeholder="Ex: 730">
           </div>
 
-          <!-- ITCH.IO SECTION -->
+          <!-- ITCH.IO INPUTS -->
           <div id="itchFields" style="display:none;">
+              <label>Titlu:</label>
+              <input type="text" name="title" placeholder="Titlu joc">
 
-              <div class="form-group">
-                  <label>Titlu:</label>
-                  <input type="text" name="title" placeholder="Titlu joc">
-              </div>
+              <label>Genuri:</label>
+              <input type="text" name="genres" placeholder="Adventure, Horror etc">
 
-              <div class="form-group">
-                  <label>Genuri:</label>
-                  <input type="text" name="genres" placeholder="Horror, Shooter etc">
-              </div>
+              <label>Link joc itch.io:</label>
+              <input type="text" name="itchLink" placeholder="https://nume.itch.io/jocul-tau">
 
-              <div class="form-group">
-                  <label>Link joc itch.io:</label>
-                  <input type="text" name="itchLink" placeholder="https://nume.itch.io/jocul">
-              </div>
-
-              <div class="form-group">
-                  <label>Imagine (URL):</label>
-                  <input type="text" name="imageUrl" placeholder="https://link-la-poza.png">
-              </div>
-
+              <label>Imagine (URL):</label>
+              <input type="text" name="imageUrl" placeholder="https://link-poza.png">
           </div>
+
+          <!-- BADGE SELECTOR -->
+          <label>Tip joc (badge):</label>
+          <select name="gameType">
+              <option value="free">FREE</option>
+              <option value="paid">PAID</option>
+              <option value="demo">DEMO</option>
+              <option value="comingsoon">COMING SOON</option>
+          </select>
 
           <button class="admin-btn">Adaugă joc</button>
       </form>
   </div>
 
 
-  <!-- ======================= GAME LIST ======================= -->
-
+  <!-- GAME LIST -->
   <div class="admin-card">
       <h2>Lista jocuri</h2>
 
@@ -78,26 +75,28 @@
           <div class="admin-games-grid">
 
               <% games.forEach(g => { %>
-
                   <div class="admin-game-card">
 
                       <% if (g.imageUrl) { %>
                           <img src="<%= g.imageUrl %>">
                       <% } else { %>
-                          <div class="agc-placeholder">Nu are imagine</div>
+                          <div class="agc-placeholder">Fără imagine</div>
                       <% } %>
 
                       <div class="agc-info">
                           <h3><%= g.title %></h3>
                           <p><%= g.genres %></p>
+
+                          <% if (g.gametype) { %>
+                            <span class="badge-admin <%= g.gametype %>"><%= g.gametype.toUpperCase() %></span>
+                          <% } %>
                       </div>
 
                       <label class="admin-check">
-                          <input 
-                              type="checkbox"
-                              name="featured"
-                              value="<%= g.id %>"
-                              <%= g.featured ? "checked" : "" %>>
+                          <input type="checkbox" 
+                                 name="featured"
+                                 value="<%= g.id %>"
+                                 <%= g.featured == 1 ? "checked" : "" %>>
                           Featured
                       </label>
 
@@ -106,7 +105,6 @@
                       </form>
 
                   </div>
-
               <% }) %>
 
           </div>

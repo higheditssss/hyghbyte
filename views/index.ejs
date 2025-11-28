@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ro">
+
 <head>
   <meta charset="UTF-8" />
   <title>HYGHBYTE // Game Vault</title>
@@ -23,19 +24,23 @@
 
 <main class="hb-main">
 
-  <!-- ======================= FEATURED SLIDER ======================= -->
+  <!-- FEATURED SLIDER -->
   <section class="featured-section">
     <h2 class="featured-title">Featured Games</h2>
+
+    <% if (featuredGames.length === 0) { %>
+      <p style="opacity:.7; font-size:14px;">Nu există jocuri în Featured.</p>
+    <% } else { %>
 
     <div class="featured-slider">
       <button id="featured-prev" class="featured-arrow left">❮</button>
 
       <div id="featured-container">
-        <% featuredGames.forEach((g, index) => { %>
-          <div class="featured-slide <%= index === 0 ? 'active' : '' %>"
-               style="--bg:url('<%= g.featuredImage || g.imageUrl %>')">
+        <% featuredGames.forEach((g, idx) => { %>
+          <div class="featured-slide <%= idx === 0 ? 'active' : '' %>"
+               style="--bg:url('<%= g.imageUrl %>')">
 
-            <img src="<%= g.featuredImage || g.imageUrl %>" class="featured-big-img">
+            <img src="<%= g.imageUrl %>" class="featured-big-img">
 
             <div class="featured-right">
               <h3><%= g.title %></h3>
@@ -48,15 +53,20 @@
                 ▶ Joacă acum
               </a>
             </div>
+
           </div>
         <% }) %>
       </div>
 
       <button id="featured-next" class="featured-arrow right">❯</button>
     </div>
+
+    <% } %>
   </section>
 
-  <!-- ======================= PAGE LAYOUT ======================= -->
+
+
+  <!-- PAGE LAYOUT -->
   <div class="hb-layout">
     <aside class="hb-sidebar">
       <div class="hb-sidebar-title">Library</div>
@@ -74,38 +84,37 @@
       </button>
     </aside>
 
-    <!-- ======================= GAME GRID ======================= -->
+
+    <!-- GAME GRID -->
     <section class="hb-content">
       <div class="hb-grid">
 
         <% games.forEach(g => { %>
-          <article class="hb-card" data-source="<%= g.source %>">
-            <div class="hb-card-image-wrap">
-              <img src="<%= g.imageUrl %>" class="hb-card-image">
-            </div>
+        <article class="hb-card" data-source="<%= g.source %>">
+          <div class="hb-card-image-wrap">
+            <img src="<%= g.imageUrl %>" class="hb-card-image">
+          </div>
 
-            <div class="hb-card-body">
-              <h3 class="hb-card-title"><%= g.title %></h3>
+          <div class="hb-card-body">
+            <h3 class="hb-card-title"><%= g.title %></h3>
 
-              <% if (g.genres) { %>
-                <p class="hb-card-genres"><%= g.genres %></p>
+            <% if (g.genres) { %>
+              <p class="hb-card-genres"><%= g.genres %></p>
+            <% } %>
+
+            <div class="hb-card-bottom">
+              <a href="<%= g.playUrl %>" target="_blank" class="hb-button-primary">
+                ▶ Joacă
+              </a>
+
+              <% if (g.source === 'steam') { %>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg" class="hb-source-icon">
+              <% } else if (g.source === 'itch') { %>
+                <img src="https://static-00.iconduck.com/assets.00/itch-io-icon-2048x2048-7q3p8x7n.png" class="hb-source-icon">
               <% } %>
-
-              <div class="hb-card-bottom">
-                <a href="<%= g.playUrl %>" target="_blank" class="hb-button-primary">
-                  ▶ Joacă
-                </a>
-
-                <% if (g.source === 'steam') { %>
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg"
-                       class="hb-source-icon">
-                <% } else if (g.source === 'itch') { %>
-                  <img src="https://static-00.iconduck.com/assets.00/itch-io-icon-2048x2048-7q3p8x7n.png"
-                       class="hb-source-icon">
-                <% } %>
-              </div>
             </div>
-          </article>
+          </div>
+        </article>
         <% }) %>
 
       </div>
@@ -119,74 +128,103 @@
 </footer>
 
 
-<!-- ======================= CASE OPENING POPUP ======================= -->
-<div id="casePopup" class="case-popup hidden">
-  <div class="case-strip-container">
-    <div id="caseStrip" class="case-strip"></div>
+<!-- ------------------------------ -->
+<!-- RANDOM GAME POPUP (NEW SYSTEM) -->
+<!-- ------------------------------ -->
+
+<div id="casePopup" class="popup hidden">
+  <div class="popup-box">
+
+    <!-- LEFT IMAGE -->
+    <div class="popup-left">
+      <img id="popupImg" src="" alt="Game" />
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="popup-right">
+
+      <h2 id="popupTitle">Game Title</h2>
+      <p id="popupGenres" class="popup-genres"></p>
+
+      <div id="popupBadge" class="popup-badge hidden"></div>
+
+      <div class="popup-buttons">
+        <a id="popupPlay" href="#" target="_blank" class="popup-play-btn">▶ Joacă</a>
+        <button id="popupClose" class="popup-close-btn">Închide</button>
+      </div>
+
+    </div>
+
   </div>
 </div>
 
 
-<!-- ======================= FEATURED SLIDER SCRIPT ======================= -->
+
+<!-- ############################ -->
+<!-- ######### JS CODE ######### -->
+<!-- ############################ -->
+
 <script>
-  const slides = document.querySelectorAll(".featured-slide");
-  let index = 0;
+/* ------------------------------
+   FEATURED SLIDER
+------------------------------ */
+const slides = document.querySelectorAll(".featured-slide");
+let index = 0;
 
-  function showSlide(i) {
-    slides.forEach(s => s.classList.remove("active"));
-    slides[i].classList.add("active");
-  }
+function showSlide(i) {
+  slides.forEach(s => s.classList.remove("active"));
+  slides[i].classList.add("active");
+}
 
-  if (slides.length > 0) {
-    document.getElementById("featured-prev").onclick = () => {
-      index = (index - 1 + slides.length) % slides.length;
-      showSlide(index);
-    };
-
-    document.getElementById("featured-next").onclick = () => {
-      index = (index + 1) % slides.length;
-      showSlide(index);
-    };
-  }
+if (slides.length > 0) {
+  document.getElementById("featured-prev").onclick = () => {
+    index = (index - 1 + slides.length) % slides.length;
+    showSlide(index);
+  };
+  document.getElementById("featured-next").onclick = () => {
+    index = (index + 1) % slides.length;
+    showSlide(index);
+  };
+}
 </script>
 
 
-<!-- ======================= CASE OPENING SCRIPT ======================= -->
 <script>
+/* ------------------------------
+   RANDOM GAME POPUP
+------------------------------ */
 const allGames = <%- JSON.stringify(games) %>;
 const caseBtn = document.getElementById("caseBtn");
 
+const popup = document.getElementById("casePopup");
+const popupImg = document.getElementById("popupImg");
+const popupTitle = document.getElementById("popupTitle");
+const popupGenres = document.getElementById("popupGenres");
+const popupPlay = document.getElementById("popupPlay");
+const popupBadge = document.getElementById("popupBadge");
+const popupClose = document.getElementById("popupClose");
+
 function openCase() {
-  if (!allGames || allGames.length === 0) return;
+  if (!allGames.length) return;
 
-  const popup = document.getElementById("casePopup");
-  const strip = document.getElementById("caseStrip");
+  const g = allGames[Math.floor(Math.random() * allGames.length)];
 
-  popup.classList.remove("hidden");
-  strip.innerHTML = "";
+  popupImg.src = g.imageUrl;
+  popupTitle.textContent = g.title;
+  popupGenres.textContent = g.genres || "";
+  popupPlay.href = g.playUrl;
 
-  const rollList = [];
-  for (let i = 0; i < 55; i++) {
-    const g = allGames[Math.floor(Math.random() * allGames.length)];
-    rollList.push(g);
-
-    const img = document.createElement("img");
-    img.src = g.imageUrl;
-    strip.appendChild(img);
+  if (g.badge) {
+    popupBadge.textContent = g.badge;
+    popupBadge.classList.remove("hidden");
+  } else {
+    popupBadge.classList.add("hidden");
   }
 
-  const winner = rollList[rollList.length - 1];
-
-  const itemWidth = 230 + 12;
-  const totalMove = (rollList.length - 4) * itemWidth;
-
-  strip.style.transition = "transform 3s cubic-bezier(0.1, 0.7, 0.2, 1)";
-  strip.style.transform = `translateX(-${totalMove}px)`;
-
-  setTimeout(() => {
-    window.location.href = winner.playUrl;
-  }, 3000);
+  popup.classList.remove("hidden");
 }
+
+popupClose.onclick = () => popup.classList.add("hidden");
 
 caseBtn.addEventListener("click", openCase);
 </script>

@@ -1,67 +1,58 @@
+/************************************************************
+ * HYGHBYTE — SERVER.JS AUTO DEV/PROD (SQLite local / PostgreSQL Railway)
+ ************************************************************/
+
 require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
-const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
-const { Pool } = require("pg");
+const fetch = (...args) =>
+  import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// ========================= DB CONNECT ============================
-if (!process.env.DATABASE_URL) {
-  console.error("❌ ERROR: Missing DATABASE_URL");
-  process.exit(1);
+/************************************************************
+ * DATABASE AUTO: PostgreSQL (Railway) -> fallback SQLite
+ ************************************************************/
+let db = null;
+let isSQLite = false;
+
+if (process.env.DATABASE_URL) {
+  // ---------- PostgreSQL (Railway) ----------
+  const { Pool } = require("pg");
+  db = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+  });
+  console.log("🟢 PROD MODE (Railway) → PostgreSQL activ");
+} else {
+  // ---------- SQLite (Local) ----------
+  const sqlite3 = require("sqlite3").verbose();
+  db = new sqlite3.Database("./local.db");
+  isSQLite = true;
+  console.log("🟢 DEV MODE (Local) → SQLite activ");
 }
 
-const db = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-});
-
-// ========================= APP SETUP =============================
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
-
-app.use(
-  session({
-    secret: "HyghByte_2025!$Rsa",
-    resave: false,
-    saveUninitialized: false,
-  })
-);
-
-// ========================= AUTH ==================================
-function requireAuth(req, res, next) {
-  if (req.session.loggedIn) return next();
-  res.render("admin-login", { error: null });
-}
-
-// ========================= STEAM FETCH ===========================
-async function fetchSteamData(appId) {
-  const res = await fetch(`https://store.steampowered.com/api/appdetails?appids=${appId}`);
-  const data = await res.json();
-
-  if (!data || !data[appId] || !data[appId].success) {
-    throw new Error("Steam ID invalid!");
-  }
-
-  const d = data[appId].data;
-
-  return {
-    title: d.name,
-    imageUrl: d.header_image,
-    genres: (d.genres || []).map(g => g.description).join(", "),
-    link: `https://store.steampowered.com/app/${appId}`
-  };
-}
-
-// ========================= INIT TABLE ============================
+/************************************************************
+ * INIT DB
+ ************************************************************/
 async function initDB() {
-  await db.query(`
+  const sqliteSQL = `
+    CREATE TABLE IF NOT EXISTS games (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      source TEXT NOT NULL,
+      steamId TEXT,
+      link TEXT,
+      imageUrl TEXT,
+      genres TEXT,
+      featured INTEGER DEFAULT 0,
+      createdAt TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+
+  const pgSQL = `
     CREATE TABLE IF NOT EXISTS games (
       id SERIAL PRIMARY KEY,
       title TEXT NOT NULL,
@@ -70,42 +61,130 @@ async function initDB() {
       link TEXT,
       imageUrl TEXT,
       genres TEXT,
-      featuredImage TEXT,
-      featured BOOLEAN DEFAULT FALSE,
-      createdAt TIMESTAMP DEFAULT NOW()
+      featured INTEGER DEFAULT 0,
+      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
-  `);
-  console.log("📦 PostgreSQL connected & tables ready!");
+  `;
+
+  if (isSQLite) {
+    db.run(sqliteSQL);
+  } else {
+    await db.query(pgSQL);
+  }
+
+  console.log("📦 DB Ready!");
 }
-initDB();
 
-// ========================= HOME ================================
+/************************************************************
+ * DB HELPERS
+ ************************************************************/
+function dbAll(query, params = []) {
+  return new Promise((resolve, reject) => {
+    if (isSQLite) {
+      db.all(query, params, (err, rows) => (err ? reject(err) : resolve(rows)));
+    } else {
+      db.query(query, params)
+        .then((res) => resolve(res.rows))
+        .catch(reject);
+    }
+  });
+}
+
+function dbRun(query, params = []) {
+  return new Promise((resolve, reject) => {
+    if (isSQLite) {
+      db.run(query, params, function (err) {
+        if (err) reject(err);
+        else resolve(this);
+      });
+    } else {
+      db.query(query, params)
+        .then(resolve)
+        .catch(reject);
+    }
+  });
+}
+
+/************************************************************
+ * EXPRESS SETTINGS
+ ************************************************************/
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
+
+app.use(
+  session({
+    secret: "HyghByte_2025!$Rsa",
+    resave: false,
+    saveUninitialized: false
+  })
+);
+
+/************************************************************
+ * AUTH
+ ************************************************************/
+function requireAuth(req, res, next) {
+  if (req.session.loggedIn) return next();
+  res.render("admin-login", { error: null });
+}
+
+/************************************************************
+ * STEAM FETCH
+ ************************************************************/
+async function fetchSteam(appId) {
+  const res = await fetch(
+    `https://store.steampowered.com/api/appdetails?appids=${appId}`
+  );
+  const data = await res.json();
+
+  if (!data || !data[appId] || !data[appId].success)
+    throw new Error("Steam ID invalid!");
+
+  const d = data[appId].data;
+
+  return {
+    title: d.name,
+    imageUrl: d.header_image,
+    genres: d.genres ? d.genres.map((g) => g.description).join(", ") : "",
+    link: `https://store.steampowered.com/app/${appId}`
+  };
+}
+
+/************************************************************
+ * NORMALIZE playUrl
+ ************************************************************/
+function normalize(g) {
+  return {
+    ...g,
+    playUrl:
+      g.source === "steam"
+        ? `https://store.steampowered.com/app/${g.steamid || g.steamId}`
+        : g.link
+  };
+}
+
+/************************************************************
+ * ROUTES
+ ************************************************************/
+
+// HOME PAGE
 app.get("/", async (req, res) => {
-  const all = await db.query(`SELECT * FROM games ORDER BY createdAt DESC`);
-  const featured = await db.query(`SELECT * FROM games WHERE featured = TRUE ORDER BY createdAt DESC`);
+  let games = await dbAll("SELECT * FROM games ORDER BY createdAt DESC");
+  let featured = await dbAll("SELECT * FROM games WHERE featured = 1 ORDER BY createdAt DESC");
 
-  const games = all.rows.map(g => ({
-    ...g,
-    playUrl:
-      g.source === "steam" ? `https://store.steampowered.com/app/${g.steamId}` : g.link
-  }));
+  games = games.map(normalize);
+  featured = featured.map(normalize);
 
-  const featuredGames = featured.rows.map(g => ({
-    ...g,
-    playUrl:
-      g.source === "steam" ? `https://store.steampowered.com/app/${g.steamId}` : g.link
-  }));
-
-  res.render("index", { games, featuredGames });
+  res.render("index", { games, featuredGames: featured });
 });
 
-// ========================= ADMIN PAGE ============================
+// ADMIN PANEL
 app.get("/admin", requireAuth, async (req, res) => {
-  const games = await db.query(`SELECT * FROM games ORDER BY createdAt DESC`);
-  res.render("admin", { games: games.rows, error: null });
+  const games = await dbAll("SELECT * FROM games ORDER BY createdAt DESC");
+  res.render("admin", { games, error: null });
 });
 
-// ========================= LOGIN ================================
 app.post("/admin", (req, res) => {
   if (req.body.password === "HyghByte_2025!$Rsa") {
     req.session.loggedIn = true;
@@ -114,68 +193,69 @@ app.post("/admin", (req, res) => {
   res.render("admin-login", { error: "Parolă greșită" });
 });
 
-// ========================= ADD GAME =============================
+// ADD GAME
 app.post("/addGame", requireAuth, async (req, res) => {
-  let { source, steamId, itchLink, imageUrl, title, genres } = req.body;
+  const { source, steamId, title, genres, itchLink, imageUrl } = req.body;
 
   try {
-    let finalLink = null;
+    let t, g, img, link;
 
-    // --- STEAM
     if (source === "steam") {
-      if (!steamId) return res.send("Lipsește Steam ID!");
-
-      const s = await fetchSteamData(steamId);
-      title = s.title;
-      imageUrl = s.imageUrl;
-      genres = s.genres;
-      finalLink = s.link;
+      const s = await fetchSteam(steamId.trim());
+      t = s.title;
+      g = s.genres;
+      img = s.imageUrl;
+      link = s.link;
+    } else {
+      t = title;
+      g = genres;
+      img = imageUrl;
+      link = itchLink;
     }
 
-    // --- ITCH.IO
-    if (source === "itch") {
-      if (!itchLink || !itchLink.startsWith("http"))
-        return res.send("Link itch.io invalid!");
-
-      finalLink = itchLink;
-      // titlu & genres le iei manual din formular
-    }
-
-    await db.query(
-      `INSERT INTO games (title, source, steamId, link, imageUrl, genres)
-       VALUES ($1,$2,$3,$4,$5,$6)`,
-      [title, source, steamId || null, finalLink, imageUrl, genres]
+    await dbRun(
+      "INSERT INTO games (title, source, steamId, link, imageUrl, genres) VALUES (?, ?, ?, ?, ?, ?)",
+      [t, source, steamId || null, link, img, g]
     );
 
     res.redirect("/admin");
   } catch (err) {
-    const games = await db.query("SELECT * FROM games ORDER BY createdAt DESC");
-    res.render("admin", { games: games.rows, error: err.message });
+    const games = await dbAll("SELECT * FROM games ORDER BY createdAt DESC");
+    res.render("admin", { games, error: err.message });
   }
 });
 
-// ========================= DELETE GAME ==========================
+// DELETE
 app.post("/deleteGame/:id", requireAuth, async (req, res) => {
-  await db.query("DELETE FROM games WHERE id = $1", [req.params.id]);
+  await dbRun("DELETE FROM games WHERE id = ?", [req.params.id]);
   res.redirect("/admin");
 });
 
-// ========================= FEATURED UPDATE ======================
+// UPDATE FEATURED
 app.post("/updateFeatured", requireAuth, async (req, res) => {
-  let featured = req.body.featured || [];
+  const featured = Array.isArray(req.body.featured)
+    ? req.body.featured.map(Number)
+    : [];
 
-  if (!Array.isArray(featured)) featured = [featured];
+  await dbRun("UPDATE games SET featured = 0");
 
-  await db.query("UPDATE games SET featured = FALSE");
   if (featured.length > 0) {
-    await db.query(
-      `UPDATE games SET featured = TRUE WHERE id = ANY($1)`,
-      [featured.map(Number)]
+    await dbRun(
+      `UPDATE games SET featured = 1 WHERE id IN (${featured
+        .map(() => "?")
+        .join(",")})`,
+      featured
     );
   }
 
   res.redirect("/admin");
 });
 
-// ========================= START APP ============================
-app.listen(PORT, () => console.log(`🚀 HYGHBYTE running on http://localhost:${PORT}`));
+/************************************************************
+ * START SERVER
+ ************************************************************/
+initDB().then(() => {
+  app.listen(PORT, () =>
+    console.log(`🚀 HYGHBYTE running → http://localhost:${PORT}`)
+  );
+});

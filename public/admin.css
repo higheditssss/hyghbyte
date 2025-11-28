@@ -1,168 +1,228 @@
-/* ===========================
-   GENERAL PAGE STYLE
-=========================== */
+/************************************************************
+   ADMIN PAGE — HYGHBYTE PREMIUM UI
+************************************************************/
 
-body {
-  background: #0c0c0f;
-  color: #fff;
-  font-family: Arial, sans-serif;
+html, body {
+  height: 100%;
   margin: 0;
-  padding: 20px;
+  padding: 0;
 }
 
-h1, h2 {
-  margin-bottom: 15px;
-  font-weight: 700;
-  color: #fff;
+body.admin-page {
+  background: #0c0c0c;
+  color: #e5e5e5;
+  font-family: "Inter", sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ===========================
-   ADD GAME FORM
-=========================== */
-
-.admin-form {
-  background: #13131a;
-  padding: 20px;
-  border-radius: 8px;
+/************************************************************
+   MAIN WRAPPER
+************************************************************/
+.admin-wrapper {
   width: 100%;
-  max-width: 600px;
-  margin-bottom: 40px;
+  max-width: 1250px;
+  margin: 40px auto;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 40px;
+}
+
+@media (max-width: 900px) {
+  .admin-wrapper {
+    grid-template-columns: 1fr;
+  }
+}
+
+/************************************************************
+   CARD STYLE
+************************************************************/
+.admin-card {
+  background: #131519;
+  padding: 28px;
+  border-radius: 14px;
+  border: 1px solid #1d2025;
+  box-shadow: 0 0 18px rgba(0,0,0,0.45);
+}
+
+.admin-card h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 22px;
+}
+
+/************************************************************
+   ERROR BOX
+************************************************************/
+.error-box {
+  background: #ff3344;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+/************************************************************
+   ADD GAME FORM
+************************************************************/
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .admin-form label {
-  display: block;
-  margin: 8px 0 3px;
-  color: #bbb;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 4px;
 }
 
 .admin-form input,
 .admin-form select {
   width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #222;
-  background: #1b1b22;
-  color: #fff;
-  margin-bottom: 12px;
+  padding: 12px 14px;
+  background: #181b20;
+  border: 1px solid #26292f;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  color: white;
+  outline: none;
+  transition: .2s;
 }
 
 .admin-form input:focus,
 .admin-form select:focus {
-  outline: none;
-  border-color: #ff3860;
+  border-color: #00ff6a;
+  background: #1d2026;
 }
 
-.admin-form button {
-  width: 100%;
-  padding: 12px;
-  background: #ff3860;
+.admin-btn {
+  background: #00ff6a;
+  color: #000;
   border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  color: white;
+  padding: 14px 22px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 800;
   cursor: pointer;
+  transition: 0.25s;
   margin-top: 10px;
 }
 
-.admin-form button:hover {
-  background: #ff5377;
+.admin-btn:hover {
+  background: #26ff7f;
 }
 
-/* ===========================
-   GAME LIST
-=========================== */
-
-.game-list {
+/************************************************************
+   GAME GRID
+************************************************************/
+.admin-games-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 18px;
-  margin-top: 20px;
+  gap: 26px;
 }
 
-.game-box {
-  background: #13131a;
-  padding: 15px;
-  border-radius: 10px;
-  text-align: center;
-  border: 1px solid #1f1f25;
-  position: relative;
-  transition: transform .2s;
+/************************************************************
+   GAME CARD
+************************************************************/
+.admin-game-card {
+  background: #14161a;
+  border: 1px solid #23262c;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: 0.25s;
+  height: 100%;
 }
 
-.game-box:hover {
-  transform: translateY(-3px);
+.admin-game-card:hover {
+  transform: translateY(-6px);
+  border-color: #2e323a;
 }
 
-.game-box img {
+/************************************************************
+   IMAGE / PLACEHOLDER
+************************************************************/
+.admin-game-card img {
   width: 100%;
-  height: 130px;
-  border-radius: 6px;
+  height: 200px;
   object-fit: cover;
-  margin-bottom: 10px;
 }
 
-.game-box h3 {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 10px 0;
-  color: #fff;
-}
-
-/* CHECKBOX FEATURED */
-.game-box label {
-  display: block;
-  margin: 8px 0;
-  font-size: 14px;
-}
-
-/* DELETE BUTTON */
-.delete-btn {
-  background: #d63031;
-  border: none;
-  padding: 10px;
+.agc-placeholder {
   width: 100%;
-  border-radius: 6px;
-  color: white;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: 0.2s;
+  height: 200px;
+  background: #1d1f25;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #777;
+  font-size: 0.9rem;
 }
 
-.delete-btn:hover {
-  background: #ff4b4b;
+/************************************************************
+   CARD TEXT
+************************************************************/
+.agc-info {
+  padding: 14px 14px 6px;
 }
 
-/* SAVE BUTTON */
-.save-btn {
-  margin-top: 25px;
-  width: 280px;
-  padding: 14px;
-  font-size: 17px;
-  border-radius: 8px;
-  background: #00c16e;
+.agc-info h3 {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.agc-info p {
+  font-size: .78rem;
+  color: #9da4ac;
+  margin-top: 4px;
+}
+
+/************************************************************
+   FEATURED CHECKBOX
+************************************************************/
+.admin-check {
+  margin-top: auto;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-check input {
+  width: 18px;
+  height: 18px;
+}
+
+/************************************************************
+   DELETE BUTTON
+************************************************************/
+.btn-delete {
+  margin: 0 14px 14px;
+  width: calc(100% - 28px);
+  background: #ff2f4c;
   border: none;
-  color: white;
+  color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 700;
   cursor: pointer;
+  transition: .25s;
 }
 
-.save-btn:hover {
-  background: #00e389;
+.btn-delete:hover {
+  background: #ff4663;
 }
 
-/* ===========================
+/************************************************************
    RESPONSIVE
-=========================== */
-
-@media (max-width: 600px) {
-  .admin-form {
-    padding: 15px;
-  }
-
-  .game-box img {
-    height: 110px;
-  }
-
-  .save-btn {
-    width: 100%;
+************************************************************/
+@media (max-width: 700px) {
+  .admin-game-card img,
+  .agc-placeholder {
+    height: 170px;
   }
 }
