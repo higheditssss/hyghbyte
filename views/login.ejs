@@ -10,20 +10,16 @@
 
 <div class="admin-wrapper">
   <div class="admin-card">
-    <h2>Introdu parola</h2>
+    <h2>Introdu parola administrator</h2>
 
-    <form method="POST" action="/admin" class="admin-form">
-
-      <input type="password" name="password" placeholder="Parolă" required>
-
+    <form action="/login" method="POST" class="admin-form">
+      <input type="password" name="password" placeholder="Parolă admin" required>
       <button class="admin-btn">Login</button>
 
       <% if (error) { %>
-        <p style="color:#ff4444;margin-top:10px;"><%= error %></p>
+        <p class="error-box"><%= error %></p>
       <% } %>
-
     </form>
-
   </div>
 </div>
 
