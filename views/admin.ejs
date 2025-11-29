@@ -1,181 +1,58 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Admin — HYGHBYTE</title>
-  <link rel="stylesheet" href="/admin.css">
+  <title>Admin</title>
   <style>
-    body {
-      background: #0b0b0b;
-      color: white;
-      font-family: "Inter", sans-serif;
-      padding: 40px;
-    }
-
-    .admin-box {
-      width: 400px;
-      background: #111317;
-      padding: 24px;
-      border-radius: 12px;
-      border: 1px solid #222;
-      margin-bottom: 40px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #333;
-      background: #1a1c20;
-      color: white;
-      margin-top: 6px;
-      margin-bottom: 14px;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #00ff4c;
-      color: black;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .games-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 20px;
-    }
-
-    .game-card {
-      background: #111317;
-      border: 1px solid #222;
-      border-radius: 10px;
-      padding: 12px;
-    }
-
-    .game-card img {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-
-    .badge {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 5px 12px;
-      font-size: 12px;
-      border-radius: 6px;
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .badge-FREE { background: #00d46a; }
-    .badge-DEMO { background: #0094ff; }
-    .badge-PAID { background: #ff3c3c; }
-    .badge-COMINGSOON { background: #ffaa00; }
-
-    .del-btn {
-      margin-top: 10px;
-      width: 100%;
-      padding: 9px;
-      background: #ff2d55;
-      border: none;
-      border-radius: 6px;
-      color: white;
-      cursor: pointer;
-      font-weight: 700;
-    }
+    body { background:#111; color:white; font-family:sans-serif; padding:20px; }
+    input,select { width:100%; padding:8px; margin-bottom:10px; }
+    .box { background:#222; padding:20px; border-radius:10px; margin-bottom:20px; }
+    table { width:100%; margin-top:20px; }
+    td { padding:8px; border-bottom:1px solid #444; }
+    button { padding:6px 14px; }
   </style>
 </head>
 
 <body>
+<h1>Admin Panel</h1>
 
-  <h1>Admin Dashboard</h1>
+<div class="box">
+  <h3>Adaugă joc</h3>
 
-  <!-- ADD GAME -->
-  <div class="admin-box">
-    <h2>Adaugă joc</h2>
+  <form action="/admin/add" method="POST">
+    <input type="text" name="title" placeholder="Titlu" required>
+    <select name="source">
+      <option value="steam">Steam</option>
+      <option value="itch">itch.io</option>
+    </select>
+    <input type="text" name="link" placeholder="Link joc" required>
+    <input type="text" name="imageurl" placeholder="URL poză" required>
+    <input type="text" name="genres" placeholder="Genuri (ex: Horror, Action)">
+    <input type="text" name="badge" placeholder="FREE / PAID / DEMO">
 
-    <% if (error) { %>
-      <p style="color: #ff4a4a; font-weight: 700; margin-bottom: 10px;"><%= error %></p>
-    <% } %>
+    <button type="submit">Adaugă</button>
+  </form>
+</div>
 
-    <form action="/admin/add" method="POST">
 
-      <label>Sursă joc</label>
-      <select name="source">
-        <option value="steam">Steam</option>
-        <option value="itch">itch.io</option>
-      </select>
-
-      <label>Steam App ID (dacă e Steam)</label>
-      <input type="text" name="steamid" placeholder="Ex: 730">
-
-      <label>Link (dacă e itch.io)</label>
-      <input type="text" name="link" placeholder="https://itch.io/...">
-
-      <label>Titlu joc</label>
-      <input type="text" name="title" required>
-
-      <label>Imagine URL</label>
-      <input type="text" name="imageurl" required>
-
-      <label>Genuri</label>
-      <input type="text" name="genres" placeholder="Action, Indie">
-
-      <label>Badge</label>
-      <select name="badge">
-        <option value="FREE">FREE</option>
-        <option value="PAID">PAID</option>
-        <option value="DEMO">DEMO</option>
-        <option value="COMING SOON">COMING SOON</option>
-      </select>
-
-      <label>Featured?</label>
-      <select name="featured">
-        <option value="false">Nu</option>
-        <option value="true">Da</option>
-      </select>
-
-      <button type="submit">Adaugă joc</button>
-    </form>
-  </div>
-
-  <!-- GAME LIST -->
-  <h2>Lista jocuri</h2>
-
-  <div class="games-list">
-
+<div class="box">
+  <h3>Jocuri existente</h3>
+  <table>
     <% games.forEach(g => { %>
-      <div class="game-card">
-
-        <img src="<%= g.imageurl %>">
-
-        <h3><%= g.title %></h3>
-
-        <p><%= g.genres %></p>
-
-        <!-- SAFE BADGE (fără erori dacă e NULL) -->
-        <% if (g.badge) { %>
-          <span class="badge badge-<%= g.badge.replace(' ', '') %>">
-            <%= g.badge %>
-          </span>
-        <% } else { %>
-          <span class="badge badge-FREE">FREE</span>
-        <% } %>
-
-        <form action="/admin/delete/<%= g.id %>" method="POST">
-          <button class="del-btn">Șterge</button>
-        </form>
-
-      </div>
+      <tr>
+        <td><%= g.id %></td>
+        <td><%= g.title %></td>
+        <td><%= g.source %></td>
+        <td><%= g.genres %></td>
+        <td><%= g.badge %></td>
+        <td>
+          <form action="/admin/delete/<%= g.id %>" method="POST">
+            <button type="submit">Șterge</button>
+          </form>
+        </td>
+      </tr>
     <% }) %>
-
-  </div>
+  </table>
+</div>
 
 </body>
 </html>
