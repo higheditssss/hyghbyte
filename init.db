@@ -1,0 +1,55 @@
+async function initDB() {
+  const sqliteSQL = `
+    CREATE TABLE IF NOT EXISTS games (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      source TEXT NOT NULL,
+      steamId TEXT,
+      link TEXT,
+      imageUrl TEXT,
+      genres TEXT,
+      badge TEXT DEFAULT 'FREE',
+      featured INTEGER DEFAULT 0,
+      createdAt TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+
+  const postgresSQL = `
+    CREATE TABLE IF NOT EXISTS games (
+      id SERIAL PRIMARY KEY,
+      title TEXT NOT NULL,
+      source TEXT NOT NULL,
+      steamId TEXT,
+      link TEXT,
+      imageUrl TEXT,
+      genres TEXT,
+      badge TEXT DEFAULT 'FREE',
+      featured INTEGER DEFAULT 0,
+      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+
+  if (isSQLite) {
+    db.run(sqliteSQL);
+
+    // IMPORTANT: dacă ai DB vechi, adăugăm coloana badge
+    db.run("ALTER TABLE games ADD COLUMN badge TEXT DEFAULT 'FREE'", () => {});
+  } else {
+    await db.query(postgresSQL);
+
+    // La Postgres adăugăm coloana doar dacă nu există
+    await db.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name='games' AND column_name='badge'
+        ) THEN
+          ALTER TABLE games ADD COLUMN badge TEXT DEFAULT 'FREE';
+        END IF;
+      END$$;
+    `);
+  }
+
+  console.log("📦 DB schema updated!");
+}

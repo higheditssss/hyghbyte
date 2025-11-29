@@ -1,59 +1,37 @@
-/************************************************************
-   ADMIN PAGE — HYGHBYTE PREMIUM UI
-************************************************************/
-
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
+/* ============================================================
+   ADMIN PAGE — DARK UI CLEAN
+============================================================ */
 
 body.admin-page {
-  background: #0c0c0c;
+  background: #0d0d0d;
   color: #e5e5e5;
   font-family: "Inter", sans-serif;
-  display: flex;
-  flex-direction: column;
+  padding: 40px;
 }
 
-/************************************************************
-   MAIN WRAPPER
-************************************************************/
 .admin-wrapper {
-  width: 100%;
-  max-width: 1250px;
-  margin: 40px auto;
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 350px auto;
   gap: 40px;
+  max-width: 1450px;
+  margin: auto;
 }
 
-@media (max-width: 900px) {
-  .admin-wrapper {
-    grid-template-columns: 1fr;
-  }
-}
-
-/************************************************************
-   CARD STYLE
-************************************************************/
 .admin-card {
-  background: #131519;
-  padding: 28px;
+  background: #111317;
+  padding: 26px;
   border-radius: 14px;
-  border: 1px solid #1d2025;
-  box-shadow: 0 0 18px rgba(0,0,0,0.45);
+  border: 1px solid #1f2227;
+  box-shadow: 0 0 14px rgba(0,0,0,0.35);
 }
 
 .admin-card h2 {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   font-weight: 800;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
-/************************************************************
-   ERROR BOX
-************************************************************/
+/* ERROR BOX */
 .error-box {
   background: #ff3344;
   padding: 12px 16px;
@@ -61,113 +39,75 @@ body.admin-page {
   color: white;
   font-weight: 600;
   margin-bottom: 18px;
-  text-align: center;
 }
 
-/************************************************************
-   ADD GAME FORM
-************************************************************/
+/* FORM */
 .admin-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.admin-form label {
-  font-size: 0.9rem;
-  font-weight: 700;
-  margin-bottom: 4px;
+  gap: 15px;
 }
 
 .admin-form input,
 .admin-form select {
-  width: 100%;
-  padding: 12px 14px;
-  background: #181b20;
-  border: 1px solid #26292f;
+  padding: 12px;
   border-radius: 8px;
-  font-size: 0.92rem;
+  background: #16181d;
+  border: 1px solid #2a2d33;
   color: white;
-  outline: none;
-  transition: .2s;
-}
-
-.admin-form input:focus,
-.admin-form select:focus {
-  border-color: #00ff6a;
-  background: #1d2026;
+  font-size: .9rem;
 }
 
 .admin-btn {
-  background: #00ff6a;
-  color: #000;
+  background: #00e05a;
   border: none;
-  padding: 14px 22px;
+  padding: 14px;
+  width: 100%;
+  color: black;
   border-radius: 10px;
-  font-size: 1rem;
   font-weight: 800;
   cursor: pointer;
-  transition: 0.25s;
-  margin-top: 10px;
+  transition: .2s;
 }
 
 .admin-btn:hover {
-  background: #26ff7f;
+  background: #18ff6e;
 }
 
-/************************************************************
-   GAME GRID
-************************************************************/
+/* GRID GAMES */
 .admin-games-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 26px;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 20px;
 }
 
-/************************************************************
-   GAME CARD
-************************************************************/
 .admin-game-card {
   background: #14161a;
-  border: 1px solid #23262c;
+  border: 1px solid #24272d;
   border-radius: 12px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: 0.25s;
-  height: 100%;
 }
 
-.admin-game-card:hover {
-  transform: translateY(-6px);
-  border-color: #2e323a;
-}
-
-/************************************************************
-   IMAGE / PLACEHOLDER
-************************************************************/
 .admin-game-card img {
   width: 100%;
-  height: 200px;
+  height: 160px;
   object-fit: cover;
 }
 
 .agc-placeholder {
-  width: 100%;
-  height: 200px;
-  background: #1d1f25;
+  background: #22252c;
+  height: 160px;
   display: flex;
   justify-content: center;
   align-items: center;
   color: #777;
-  font-size: 0.9rem;
 }
 
-/************************************************************
-   CARD TEXT
-************************************************************/
+/* INFO */
 .agc-info {
-  padding: 14px 14px 6px;
+  padding: 10px;
 }
 
 .agc-info h3 {
@@ -176,53 +116,45 @@ body.admin-page {
 }
 
 .agc-info p {
-  font-size: .78rem;
-  color: #9da4ac;
-  margin-top: 4px;
+  font-size: .75rem;
+  opacity: .7;
 }
 
-/************************************************************
-   FEATURED CHECKBOX
-************************************************************/
+/* BADGES */
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  margin-top: 5px;
+  border-radius: 6px;
+  font-size: .7rem;
+  font-weight: 700;
+}
+
+.badge-FREE { background: #00e05a; color:#000; }
+.badge-PAID { background: #ff3f3f; }
+.badge-DEMO { background: #009dff; }
+.badge-COMINGSOON { background: #ed8d00; }
+
+/* CHECKBOX */
 .admin-check {
   margin-top: auto;
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  padding: 10px;
+  font-size: .85rem;
 }
 
-.admin-check input {
-  width: 18px;
-  height: 18px;
-}
-
-/************************************************************
-   DELETE BUTTON
-************************************************************/
+/* DELETE */
 .btn-delete {
-  margin: 0 14px 14px;
-  width: calc(100% - 28px);
   background: #ff2f4c;
   border: none;
-  color: #fff;
   padding: 10px;
+  width: 90%;
+  margin: 10px auto;
   border-radius: 8px;
   font-weight: 700;
   cursor: pointer;
-  transition: .25s;
+  transition: .2s;
 }
 
 .btn-delete:hover {
-  background: #ff4663;
-}
-
-/************************************************************
-   RESPONSIVE
-************************************************************/
-@media (max-width: 700px) {
-  .admin-game-card img,
-  .agc-placeholder {
-    height: 170px;
-  }
+  background: #ff4f67;
 }

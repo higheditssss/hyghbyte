@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <title>HyghByte Admin</title>
-
-  <link rel="stylesheet" href="/styles.css">
-  <link rel="stylesheet" href="/admin.css">
+  <meta charset="UTF-8" />
+  <title>HYGHBYTE ADMIN</title>
+  <link rel="stylesheet" href="/admin.css" />
 </head>
 
 <body class="admin-page">
 
 <div class="admin-wrapper">
 
-  <!-- ADD GAME PANEL -->
-  <div class="admin-card">
+  <!-- =======================
+       ADD GAME PANEL
+       ======================= -->
+  <div class="admin-card add-card">
+
       <h2>Adaugă joc</h2>
 
       <% if (error) { %>
@@ -22,109 +23,114 @@
 
       <form action="/addGame" method="POST" class="admin-form">
 
-          <!-- SELECT SOURCE -->
-          <div class="form-group">
-              <label>Sursă joc:</label>
-              <select name="source" id="sourceSelect" onchange="toggleFields()">
-                  <option value="steam">Steam (doar ID)</option>
-                  <option value="itch">itch.io (manual)</option>
-              </select>
-          </div>
+          <!-- SURSA -->
+          <label>Sursă joc:</label>
+          <select name="source" id="sourceSelect" onchange="toggleFields()">
+              <option value="steam">Steam (ID automat)</option>
+              <option value="itch">itch.io (manual)</option>
+          </select>
 
-          <!-- STEAM ONLY INPUT -->
+          <!-- STEAM -->
           <div id="steamFields">
               <label>Steam App ID:</label>
               <input type="text" name="steamId" placeholder="Ex: 730">
           </div>
 
-          <!-- ITCH.IO INPUTS -->
+          <!-- ITCH.IO -->
           <div id="itchFields" style="display:none;">
               <label>Titlu:</label>
               <input type="text" name="title" placeholder="Titlu joc">
 
               <label>Genuri:</label>
-              <input type="text" name="genres" placeholder="Adventure, Horror etc">
+              <input type="text" name="genres" placeholder="Adventure, Horror…">
 
-              <label>Link joc itch.io:</label>
-              <input type="text" name="itchLink" placeholder="https://nume.itch.io/jocul-tau">
+              <label>Link joc:</label>
+              <input type="text" name="itchLink" placeholder="https://...">
 
               <label>Imagine (URL):</label>
-              <input type="text" name="imageUrl" placeholder="https://link-poza.png">
+              <input type="text" name="imageUrl" placeholder="https://...">
           </div>
 
-          <!-- BADGE SELECTOR -->
+          <!-- BADGE -->
           <label>Tip joc (badge):</label>
-          <select name="gameType">
-              <option value="free">FREE</option>
-              <option value="paid">PAID</option>
-              <option value="demo">DEMO</option>
-              <option value="comingsoon">COMING SOON</option>
+          <select name="badge">
+              <option value="FREE">FREE</option>
+              <option value="PAID">PAID</option>
+              <option value="DEMO">DEMO</option>
+              <option value="COMING SOON">COMING SOON</option>
           </select>
 
           <button class="admin-btn">Adaugă joc</button>
       </form>
+
   </div>
 
 
-  <!-- GAME LIST -->
-  <div class="admin-card">
+
+  <!-- =======================
+       GAME LIST PANEL
+       ======================= -->
+  <div class="admin-card list-card">
       <h2>Lista jocuri</h2>
 
       <form action="/updateFeatured" method="POST">
 
-          <div class="admin-games-grid">
+      <div class="admin-games-grid">
 
-              <% games.forEach(g => { %>
-                  <div class="admin-game-card">
+          <% games.forEach(g => { %>
 
-                      <% if (g.imageUrl) { %>
-                          <img src="<%= g.imageUrl %>">
-                      <% } else { %>
-                          <div class="agc-placeholder">Fără imagine</div>
-                      <% } %>
+              <div class="admin-game-card">
 
-                      <div class="agc-info">
-                          <h3><%= g.title %></h3>
-                          <p><%= g.genres %></p>
+                  <% if (g.imageUrl) { %>
+                      <img src="<%= g.imageUrl %>">
+                  <% } else { %>
+                      <div class="agc-placeholder">Fără imagine</div>
+                  <% } %>
 
-                          <% if (g.gametype) { %>
-                            <span class="badge-admin <%= g.gametype %>"><%= g.gametype.toUpperCase() %></span>
-                          <% } %>
-                      </div>
+                  <div class="agc-info">
+                      <h3><%= g.title %></h3>
+                      <p><%= g.genres %></p>
 
-                      <label class="admin-check">
-                          <input type="checkbox" 
-                                 name="featured"
-                                 value="<%= g.id %>"
-                                 <%= g.featured == 1 ? "checked" : "" %>>
-                          Featured
-                      </label>
-
-                      <form action="/deleteGame/<%= g.id %>" method="POST">
-                          <button class="btn-delete">Șterge</button>
-                      </form>
-
+                      <span class="badge badge-<%= g.badge.replace(' ','') %>">
+                        <%= g.badge %>
+                      </span>
                   </div>
-              <% }) %>
 
-          </div>
+                  <label class="admin-check">
+                      <input type="checkbox"
+                             name="featured"
+                             value="<%= g.id %>"
+                             <%= g.featured == 1 ? "checked" : "" %>> Featured
+                  </label>
 
-          <button class="admin-btn" style="margin-top:20px;">Salvează Featured</button>
+                  <form action="/deleteGame/<%= g.id %>" method="POST">
+                      <button class="btn-delete">Șterge</button>
+                  </form>
+
+              </div>
+
+          <% }) %>
+
+      </div>
+
+      <button class="admin-btn" style="margin-top:20px;">Salvează Featured</button>
 
       </form>
+
   </div>
 
 </div>
 
+
 <script>
 function toggleFields() {
-    const src = document.getElementById("sourceSelect").value;
+  const src = document.getElementById("sourceSelect").value;
 
-    document.getElementById("steamFields").style.display =
-        src === "steam" ? "block" : "none";
+  document.getElementById("steamFields").style.display =
+    src === "steam" ? "block" : "none";
 
-    document.getElementById("itchFields").style.display =
-        src === "itch" ? "block" : "none";
+  document.getElementById("itchFields").style.display =
+    src === "itch" ? "block" : "none";
 }
 </script>
 

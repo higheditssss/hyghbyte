@@ -1,5 +1,5 @@
 /************************************************************
- * HYGHBYTE — SERVER.JS AUTO DEV/PROD (SQLite local / PostgreSQL Railway)
+ * HYGHBYTE — SERVER.JS (FINAL COPY–PASTE)
  ************************************************************/
 
 require("dotenv").config();
@@ -13,25 +13,23 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 /************************************************************
- * DATABASE AUTO: PostgreSQL (Railway) -> fallback SQLite
+ * DATABASE: AUTO SQLITE (LOCAL) / POSTGRES (RAILWAY)
  ************************************************************/
 let db = null;
 let isSQLite = false;
 
 if (process.env.DATABASE_URL) {
-  // ---------- PostgreSQL (Railway) ----------
   const { Pool } = require("pg");
   db = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false }
   });
-  console.log("🟢 PROD MODE (Railway) → PostgreSQL activ");
+  console.log("🟢 PROD: PostgreSQL activ (Railway)");
 } else {
-  // ---------- SQLite (Local) ----------
   const sqlite3 = require("sqlite3").verbose();
   db = new sqlite3.Database("./local.db");
   isSQLite = true;
-  console.log("🟢 DEV MODE (Local) → SQLite activ");
+  console.log("🟢 DEV: SQLite activ");
 }
 
 /************************************************************
@@ -41,12 +39,13 @@ async function initDB() {
   const sqliteSQL = `
     CREATE TABLE IF NOT EXISTS games (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL,
-      source TEXT NOT NULL,
+      title TEXT,
+      source TEXT,
       steamId TEXT,
       link TEXT,
       imageUrl TEXT,
       genres TEXT,
+      badge TEXT DEFAULT 'FREE',
       featured INTEGER DEFAULT 0,
       createdAt TEXT DEFAULT CURRENT_TIMESTAMP
     );
@@ -55,36 +54,36 @@ async function initDB() {
   const pgSQL = `
     CREATE TABLE IF NOT EXISTS games (
       id SERIAL PRIMARY KEY,
-      title TEXT NOT NULL,
-      source TEXT NOT NULL,
+      title TEXT,
+      source TEXT,
       steamId TEXT,
       link TEXT,
       imageUrl TEXT,
       genres TEXT,
+      badge TEXT DEFAULT 'FREE',
       featured INTEGER DEFAULT 0,
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
   `;
 
-  if (isSQLite) {
-    db.run(sqliteSQL);
-  } else {
-    await db.query(pgSQL);
-  }
+  if (isSQLite) db.run(sqliteSQL);
+  else await db.query(pgSQL);
 
-  console.log("📦 DB Ready!");
+  console.log("📦 Database ready!");
 }
 
 /************************************************************
- * DB HELPERS
+ * HELPERS
  ************************************************************/
 function dbAll(query, params = []) {
   return new Promise((resolve, reject) => {
     if (isSQLite) {
-      db.all(query, params, (err, rows) => (err ? reject(err) : resolve(rows)));
+      db.all(query, params, (err, rows) =>
+        err ? reject(err) : resolve(rows)
+      );
     } else {
       db.query(query, params)
-        .then((res) => resolve(res.rows))
+        .then(res => resolve(res.rows))
         .catch(reject);
     }
   });
@@ -106,7 +105,7 @@ function dbRun(query, params = []) {
 }
 
 /************************************************************
- * EXPRESS SETTINGS
+ * APP CONFIG
  ************************************************************/
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -146,13 +145,13 @@ async function fetchSteam(appId) {
   return {
     title: d.name,
     imageUrl: d.header_image,
-    genres: d.genres ? d.genres.map((g) => g.description).join(", ") : "",
+    genres: (d.genres || []).map((g) => g.description).join(", "),
     link: `https://store.steampowered.com/app/${appId}`
   };
 }
 
 /************************************************************
- * NORMALIZE playUrl
+ * NORMALIZE URL
  ************************************************************/
 function normalize(g) {
   return {
@@ -167,11 +166,11 @@ function normalize(g) {
 /************************************************************
  * ROUTES
  ************************************************************/
-
-// HOME PAGE
 app.get("/", async (req, res) => {
   let games = await dbAll("SELECT * FROM games ORDER BY createdAt DESC");
-  let featured = await dbAll("SELECT * FROM games WHERE featured = 1 ORDER BY createdAt DESC");
+  let featured = await dbAll(
+    "SELECT * FROM games WHERE featured = 1 ORDER BY createdAt DESC"
+  );
 
   games = games.map(normalize);
   featured = featured.map(normalize);
@@ -179,7 +178,6 @@ app.get("/", async (req, res) => {
   res.render("index", { games, featuredGames: featured });
 });
 
-// ADMIN PANEL
 app.get("/admin", requireAuth, async (req, res) => {
   const games = await dbAll("SELECT * FROM games ORDER BY createdAt DESC");
   res.render("admin", { games, error: null });
@@ -193,29 +191,36 @@ app.post("/admin", (req, res) => {
   res.render("admin-login", { error: "Parolă greșită" });
 });
 
-// ADD GAME
 app.post("/addGame", requireAuth, async (req, res) => {
-  const { source, steamId, title, genres, itchLink, imageUrl } = req.body;
+  let { source, steamId, title, genres, itchLink, imageUrl, badge } = req.body;
 
   try {
-    let t, g, img, link;
+    let finalTitle, finalGenres, finalImage, finalLink;
 
     if (source === "steam") {
       const s = await fetchSteam(steamId.trim());
-      t = s.title;
-      g = s.genres;
-      img = s.imageUrl;
-      link = s.link;
+      finalTitle = s.title;
+      finalGenres = s.genres;
+      finalImage = s.imageUrl;
+      finalLink = s.link;
     } else {
-      t = title;
-      g = genres;
-      img = imageUrl;
-      link = itchLink;
+      finalTitle = title;
+      finalGenres = genres;
+      finalImage = imageUrl;
+      finalLink = itchLink;
     }
 
     await dbRun(
-      "INSERT INTO games (title, source, steamId, link, imageUrl, genres) VALUES (?, ?, ?, ?, ?, ?)",
-      [t, source, steamId || null, link, img, g]
+      "INSERT INTO games (title, source, steamId, link, imageUrl, genres, badge) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [
+        finalTitle,
+        source,
+        steamId || null,
+        finalLink,
+        finalImage,
+        finalGenres,
+        badge || "FREE"
+      ]
     );
 
     res.redirect("/admin");
@@ -225,13 +230,11 @@ app.post("/addGame", requireAuth, async (req, res) => {
   }
 });
 
-// DELETE
 app.post("/deleteGame/:id", requireAuth, async (req, res) => {
   await dbRun("DELETE FROM games WHERE id = ?", [req.params.id]);
   res.redirect("/admin");
 });
 
-// UPDATE FEATURED
 app.post("/updateFeatured", requireAuth, async (req, res) => {
   const featured = Array.isArray(req.body.featured)
     ? req.body.featured.map(Number)
@@ -252,7 +255,7 @@ app.post("/updateFeatured", requireAuth, async (req, res) => {
 });
 
 /************************************************************
- * START SERVER
+ * START
  ************************************************************/
 initDB().then(() => {
   app.listen(PORT, () =>

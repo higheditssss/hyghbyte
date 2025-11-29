@@ -1,7 +1,9 @@
-/* ============================================================
-   GLOBAL
-============================================================ */
-* {
+/* ==========================================================
+   RESET + GLOBAL
+========================================================== */
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -11,14 +13,19 @@ html, body {
   background: #0b0b0b;
   color: #e2e2e2;
   font-family: "Inter", sans-serif;
+  overflow-x: hidden;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* ============================================================
+main {
+  flex: 1;
+}
+
+/* ==========================================================
    HEADER
-============================================================ */
+========================================================== */
 .hb-header {
   background: #101215;
   border-bottom: 1px solid #1a1d21;
@@ -42,7 +49,6 @@ html, body {
   margin-left: 8px;
   font-size: .75rem;
   color: #777;
-  letter-spacing: .17em;
 }
 
 .hb-header-right {
@@ -61,100 +67,86 @@ html, body {
   transition: 0.2s;
 }
 
+.hb-kick-btn {
+  background: #00ff4c;
+  color: black;
+}
+.hb-kick-btn:hover {
+  background: #15ff63;
+}
+
 .hb-random-btn {
   background: #ffffff;
   color: #000;
 }
-.hb-random-btn:hover { background: #dedede; }
-
-.hb-kick-btn {
-  background: #00ff4c;
-  color: #000;
+.hb-random-btn:hover {
+  background: #e6e6e6;
 }
-.hb-kick-btn:hover { background: #12ff58; }
 
-/* ============================================================
-   LAYOUT
-============================================================ */
+/* ==========================================================
+   FOOTER
+========================================================== */
+.hb-footer {
+  text-align: center;
+  padding: 24px 0 35px;
+  color: #7c7c7c;
+  font-size: .85rem;
+}
+
+/* ==========================================================
+   MAIN LAYOUT
+========================================================== */
 .hb-main {
-  flex: 1;
-  padding: 28px 3vw 60px;
+  padding: 30px 3vw 70px;
 }
 
-.hb-layout {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 26px;
-}
-
-/* ============================================================
-   SIDEBAR
-============================================================ */
-.hb-sidebar {
-  background: #111317;
-  border: 1px solid #1e2024;
-  border-radius: 10px;
-  padding: 18px 14px;
-  height: fit-content;
-  position: sticky;
-  top: 110px;
-}
-
-.hb-sidebar-title {
-  font-size: .75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-
-.hb-sidebar-item {
+/* ==========================================================
+   SEARCH BAR (în loc de LIBRARY)
+========================================================== */
+.hb-search-container {
   width: 100%;
-  text-align: left;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  background: transparent;
-  color: #e2e2e2;
-  border: 1px solid transparent;
+  margin-bottom: 25px;
   display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-  transition: .15s;
-}
-.hb-sidebar-item:hover { background: #17191f; }
-.hb-sidebar-item.is-active {
-  background: #1c1e24;
-  border-color: #2b2e34;
+  justify-content: flex-start;
 }
 
-/* dots */
-.hb-sidebar-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.hb-search-input {
+  width: 300px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #1f2225;
+  background: #111317;
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+  transition: .2s;
 }
-.hb-sidebar-dot.all { background: #fff; }
-.hb-sidebar-dot.steam { background: #7aa2ff; }
-.hb-sidebar-dot.itch { background: #ff597a; }
 
-/* ============================================================
+.hb-search-input:focus {
+  border-color: #00ff70;
+  background: #15181c;
+}
+
+/* ==========================================================
    FEATURED SLIDER
-============================================================ */
-.featured-section { margin-bottom: 40px; }
+========================================================== */
+.featured-section {
+  margin-bottom: 40px;
+}
+
 .featured-title {
   font-size: 1.6rem;
-  font-weight: 800;
-  margin-bottom: 20px;
+  font-weight: 900;
+  margin-bottom: 18px;
 }
 
 .featured-slider {
   position: relative;
   width: 100%;
   height: 340px;
-  background: #111;
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
+  background: #111;
 }
 
 .featured-slide {
@@ -164,7 +156,10 @@ html, body {
   grid-template-columns: 55% 45%;
   visibility: hidden;
 }
-.featured-slide.active { visibility: visible; }
+
+.featured-slide.active {
+  visibility: visible;
+}
 
 .featured-slide::before {
   content: "";
@@ -173,26 +168,28 @@ html, body {
   background-image: var(--bg);
   background-size: cover;
   background-position: center;
-  filter: blur(15px) brightness(0.35);
-  transform: scale(1.2);
+  filter: blur(14px) brightness(0.32);
+  transform: scale(1.13);
   z-index: -2;
 }
+
 .featured-slide::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
+  background: linear-gradient(90deg, rgba(0,0,0,0.8), rgba(0,0,0,0.3));
   z-index: -1;
 }
 
 .featured-big-img {
   width: 100%;
-  height: 340px;
+  height: 100%;
   object-fit: cover;
 }
 
 .featured-right {
-  padding: 40px;
+  padding-right: 35px;
+  padding-left: 45px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -201,47 +198,52 @@ html, body {
 .featured-right h3 {
   font-size: 32px;
   font-weight: 800;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .featured-genres {
-  opacity: .85;
   font-size: 14px;
-  margin-bottom: 18px;
+  color: #cfcfcf;
+  margin-bottom: 20px;
 }
 
 .featured-play-btn {
-  padding: 14px 30px;
-  background: #ff3355;
-  color: #fff;
-  border-radius: 10px;
-  font-weight: 700;
   width: fit-content;
+  background: #ff3f5e;
+  color: #fff;
+  padding: 13px 28px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 900;
+  font-size: 15px;
   transition: .2s;
 }
-.featured-play-btn:hover { background: #ff4d6d; }
+.featured-play-btn:hover {
+  background: #ff5573;
+}
 
-/* arrows */
 .featured-arrow {
   position: absolute;
-  top: 50%; 
+  top: 50%;
   transform: translateY(-50%);
+  background: rgba(255,255,255,0.12);
   border: none;
-  background: rgba(255,255,255,0.15);
   color: #fff;
   padding: 10px 16px;
-  font-size: 22px;
-  border-radius: 10px;
+  font-size: 20px;
   cursor: pointer;
-  z-index: 50;
+  border-radius: 8px;
+  z-index: 10;
 }
-.featured-arrow:hover { background: rgba(255,255,255,0.25); }
-.featured-arrow.left { left: 10px; }
-.featured-arrow.right { right: 10px; }
+.featured-arrow:hover {
+  background: rgba(255,255,255,0.22);
+}
+.featured-arrow.left { left: 12px; }
+.featured-arrow.right { right: 12px; }
 
-/* ============================================================
+/* ==========================================================
    GAME GRID
-============================================================ */
+========================================================== */
 .hb-grid {
   display: grid;
   gap: 26px;
@@ -249,40 +251,51 @@ html, body {
 }
 
 .hb-card {
-  background: #111317;
-  border: 1px solid #1e2024;
-  border-radius: 10px;
+  border-radius: 12px;
+  background: #121417;
   overflow: hidden;
+  border: 1px solid #1d2024;
   transition: .25s;
+  position: relative;
 }
+
 .hb-card:hover {
-  transform: translateY(-5px);
-  border-color: #292d33;
+  transform: translateY(-6px);
+  border-color: #292d31;
+  box-shadow: 0 0 12px rgba(0,0,0,0.45);
 }
 
 .hb-card-image-wrap {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16/9;
   overflow: hidden;
 }
+
 .hb-card-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: .25s;
 }
-.hb-card:hover .hb-card-image { transform: scale(1.08); }
 
-.hb-card-body { padding: 14px; }
-.hb-card-title {
-  font-size: 1rem;
-  font-weight: 800;
-  margin-bottom: 6px;
+.hb-card:hover .hb-card-image {
+  transform: scale(1.05);
 }
+
+.hb-card-body {
+  padding: 14px;
+}
+
+.hb-card-title {
+  font-weight: 800;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
 .hb-card-genres {
   font-size: .75rem;
-  opacity: .75;
-  margin-bottom: 10px;
+  color: #9ca0a5;
+  margin-bottom: 12px;
 }
 
 .hb-card-bottom {
@@ -292,372 +305,129 @@ html, body {
 }
 
 .hb-button-primary {
-  background: #ff3355;
-  padding: 7px 14px;
+  background: #ff3558;
+  padding: 8px 14px;
   border-radius: 6px;
   color: white;
+  font-size: .8rem;
   font-weight: 700;
-  font-size: .85rem;
+  text-decoration: none;
 }
-.hb-button-primary:hover { background: #ff4d6d; }
 
 .hb-source-icon {
   width: 26px;
   opacity: .85;
 }
 
-/* ============================================================
-   BADGES
-============================================================ */
-.badge {
-  padding: 4px 10px;
-  border-radius: 6px;
+/* ==========================================================
+   BADGE MIC PESTE POZE
+========================================================== */
+.game-badge-overlay {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 5px 10px;
   font-size: 11px;
-  font-weight: 800;
-  display: inline-block;
-  margin-bottom: 8px;
-}
-
-.badge.free { background: #00c853; color: #000; }
-.badge.paid { background: #ff1744; color: #fff; }
-.badge.demo { background: #2979ff; color: #fff; }
-.badge.soon { background: #ff9100; color: #000; }
-
-/* ============================================================
-   POPUP FULL HD
-============================================================ */
-.popup {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.92);
-  backdrop-filter: blur(6px);
-  z-index: 999999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.popup.hidden { display: none; }
-
-.popup-content {
-  width: 80vw;
-  max-width: 1400px;
-  height: 80vh;
-  max-height: 900px;
-  background: #111317;
-  border-radius: 20px;
-  overflow: hidden;
-  display: flex;
-}
-
-.popup-img {
-  width: 60%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.popup-right {
-  width: 40%;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-}
-
-.popup-right h1 {
-  font-size: 36px;
   font-weight: 900;
-  margin-bottom: 10px;
-}
-
-.popup-right p {
-  font-size: 16px;
-  opacity: .8;
-  margin-bottom: 30px;
-}
-
-.popup-play {
-  padding: 16px 30px;
-  background: #ff3355;
-  color: white;
-  font-size: 20px;
-  font-weight: 900;
-  border-radius: 12px;
-  text-align: center;
-  transition: .2s;
-}
-.popup-play:hover { background: #ff4d6d; }
-
-.popup-close {
-  margin-top: auto;
-  padding: 14px;
-  background: #333;
-  border: none;
+  border-radius: 6px;
   color: #fff;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 700;
-}
-.popup-close:hover { background: #444; }
-
-/* ============================================================
-   FOOTER FIXED BOTTOM ALWAYS
-============================================================ */
-.hb-footer {
-  text-align: center;
-  padding: 25px 0 25px;
-  margin-top: auto;
-  font-size: .82rem;
-  opacity: .65;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
 }
 
-/* ============================================================
-   RESPONSIVE
-============================================================ */
-@media (max-width: 900px) {
-  .hb-layout { grid-template-columns: 1fr; }
-}
-/* ================================
-   POPUP RANDOM GAME — NEW DESIGN
-================================ */
+/* badge colors */
+.badge-free { background: #00d46a; }
+.badge-paid { background: #ff3c3c; }
+.badge-demo { background: #0094ff; }
+.badge-comingsoon { background: #ffaa00; }
 
+/* ==========================================================
+   POPUP
+========================================================== */
 .popup {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.85);
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(15px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999999;
+  padding: 20px;
 }
 
 .popup.hidden {
-  display: none;
+  display: none !important;
 }
 
-.popup-box {
-  width: 90%;
-  max-width: 1100px;
-  height: 620px;
-  background: #111317;
-  border: 1px solid #23262b;
-  border-radius: 16px;
-  display: flex;
-  overflow: hidden;
-  box-shadow: 0 0 25px rgba(0,0,0,0.5);
-}
-
-/* IMAGE LEFT */
-.popup-left {
-  width: 45%;
-  background: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.popup-left img {
-  width: 95%;
-  height: auto;
-  border-radius: 12px;
-  object-fit: cover;
-  box-shadow: 0 0 12px rgba(0,0,0,0.4);
-}
-
-/* INFO RIGHT */
-.popup-right {
-  width: 55%;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.popup-right h2 {
-  color: #fff;
-  font-size: 2rem;
-  margin-bottom: 10px;
-}
-
-.popup-genres {
-  color: #9aa0a6;
-  margin-bottom: 20px;
-  font-size: 1rem;
-}
-
-/* BADGE */
-.popup-badge {
-  display: inline-block;
-  padding: 6px 14px;
-  background: #ff3366;
-  color: #fff;
-  border-radius: 8px;
-  font-weight: 700;
-  margin-bottom: 25px;
-  font-size: 0.9rem;
-}
-
-/* BUTTONS */
-.popup-buttons {
-  display: flex;
-  gap: 15px;
-}
-
-.popup-play-btn {
-  background: #00e05a;
-  padding: 12px 22px;
-  border-radius: 10px;
-  color: #000;
-  font-weight: 800;
-  text-decoration: none;
-  font-size: 1.1rem;
-}
-
-.popup-close-btn {
-  background: #ff3355;
-  padding: 12px 22px;
-  border: none;
-  border-radius: 10px;
-  color: #fff;
-  font-weight: 800;
-  cursor: pointer;
-  font-size: 1.1rem;
-}
-
-/* MOBILE */
-@media (max-width: 900px) {
-  .popup-box {
-    flex-direction: column;
-    height: auto;
-  }
-
-  .popup-left,
-  .popup-right {
-    width: 100%;
-  }
-
-  .popup-right {
-    padding: 25px;
-  }
-}
-/* ================================================
-   POPUP — FULL LEFT IMAGE + BACKGROUND BLUR
-================================================ */
-
-.popup {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.75);
-  backdrop-filter: blur(10px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999999;
-}
-
-.popup.hidden {
-  display: none;
-}
-
-.popup-box {
-  width: 90%;
-  max-width: 1400px;
-  height: 650px;
-  background: rgba(15, 17, 21, 0.75);
-  border-radius: 20px;
-  display: grid;
-  grid-template-columns: 60% 40%;
-  overflow: hidden;
-  position: relative;
-}
-
-/* FUNDAL BLURAT DIN POZA JOCULUI */
-.popup-box::before {
-  content: "";
+.popup-bg {
   position: absolute;
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: blur(35px) brightness(0.35);
-  transform: scale(1.3);
-  z-index: 0;
+  filter: blur(25px) brightness(0.28);
+  transform: scale(1.2);
+  z-index: -1;
 }
 
-.popup-box[data-bg]::before {
-  background-image: var(--bg);
+.popup-content {
+  width: 600px;
+  max-width: 90%;
+  background: rgba(20,20,20,0.7);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 18px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(0,0,0,0.4);
 }
 
-/* ================= LEFT IMAGE ================= */
-
-.popup-left {
-  position: relative;
-  z-index: 2;
+.popup-img {
   width: 100%;
-  height: 100%;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 0 16px rgba(0,0,0,0.5);
 }
 
-.popup-left img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 0;
-}
-
-/* ================= RIGHT INFO ================= */
-
-.popup-right {
-  position: relative;
-  z-index: 3;
-  padding: 55px;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.popup-right h2 {
-  font-size: 40px;
-  font-weight: 800;
-  margin-bottom: 10px;
+.popup-title {
+  font-size: 26px;
+  font-weight: 900;
+  margin-bottom: 8px;
 }
 
 .popup-genres {
-  opacity: 0.85;
-  font-size: 18px;
-  margin-bottom: 30px;
-}
-
-/* BARĂ SEPARATOR */
-.popup-divider {
-  width: 100%;
-  height: 6px;
-  background: #ff3355;
-  border-radius: 50px;
-  margin-bottom: 35px;
-}
-
-/* BUTTONS */
-.popup-buttons {
-  display: flex;
-  gap: 16px;
+  font-size: 15px;
+  color: #ccc;
+  margin-bottom: 14px;
 }
 
 .popup-play-btn {
-  background: #00e05a;
-  padding: 14px 30px;
+  display: inline-block;
+  padding: 12px 26px;
+  background: #ff3355;
   border-radius: 10px;
-  color: #000;
-  font-size: 17px;
+  color: white;
   font-weight: 800;
+  font-size: 16px;
   text-decoration: none;
+  box-shadow: 0 0 16px rgba(255, 51, 85, 0.4);
+  transition: .2s;
+  margin-bottom: 12px;
+}
+
+.popup-play-btn:hover {
+  background: #ff4b6d;
 }
 
 .popup-close-btn {
-  background: #ff2f4c;
-  padding: 14px 30px;
-  border-radius: 10px;
-  color: #fff;
-  font-weight: 800;
-  font-size: 17px;
+  padding: 8px 20px;
+  background: #333;
   border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
   cursor: pointer;
+}
+
+.popup-close-btn:hover {
+  background: #444;
 }
