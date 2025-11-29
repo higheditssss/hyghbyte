@@ -1,7 +1,6 @@
 import express from "express";
 import pg from "pg";
 import bodyParser from "body-parser";
-import session from "express-session";
 import path from "path";
 import dotenv from "dotenv";
 
@@ -13,59 +12,16 @@ app.use(express.static("public"));
 
 app.set("view engine", "ejs");
 
-// 🔐 SESSION — pentru login admin
-app.use(
-  session({
-    secret: "supersecretkey123",
-    resave: false,
-    saveUninitialized: true,
-  })
-);
-
-// 🟢 Railway PostgreSQL
+// 🔥 FIX Railway: folosește baza PostgreSQL
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 
-// ==========================
-//  PROTECT ROUTES (middleware)
-// ==========================
-function requireLogin(req, res, next) {
-  if (!req.session.loggedIn) return res.redirect("/login");
-  next();
-}
 
-
-// ==========================
-// LOGIN PAGE
-// ==========================
-app.get("/login", (req, res) => {
-  res.render("login", { error: null });
-});
-
-app.post("/login", (req, res) => {
-  const { user, pass } = req.body;
-
-  // 🔐 PAROLA ADMIN (schimb-o cum vrei)
-  if (user === "admin" && pass === "hyghbyte2025") {
-    req.session.loggedIn = true;
-    return res.redirect("/admin");
-  }
-
-  res.render("login", { error: "Date incorecte!" });
-});
-
-app.get("/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.redirect("/login");
-  });
-});
-
-
-// ==========================
-// INDEX — Jocuri pe site
-// ==========================
+// ========================
+//   INDEX — LISTĂ JOCURI
+// ========================
 app.get("/", async (req, res) => {
   try {
     const result = await db.query("SELECT * FROM games ORDER BY id DESC");
@@ -76,10 +32,10 @@ app.get("/", async (req, res) => {
 });
 
 
-// ==========================
-// ADMIN — PROTEJAT CU LOGIN
-// ==========================
-app.get("/admin", requireLogin, async (req, res) => {
+// ========================
+//   ADMIN PANEL
+// ========================
+app.get("/admin", async (req, res) => {
   try {
     const result = await db.query("SELECT * FROM games ORDER BY id DESC");
     res.render("admin", { games: result.rows });
@@ -89,10 +45,10 @@ app.get("/admin", requireLogin, async (req, res) => {
 });
 
 
-// ==========================
-// ADD GAME
-// ==========================
-app.post("/admin/add", requireLogin, async (req, res) => {
+// ========================
+//   ADAUGĂ JOC
+// ========================
+app.post("/admin/add", async (req, res) => {
   const { title, source, link, imageurl, genres, badge } = req.body;
 
   try {
@@ -107,10 +63,10 @@ app.post("/admin/add", requireLogin, async (req, res) => {
 });
 
 
-// ==========================
-// DELETE GAME
-// ==========================
-app.post("/admin/delete/:id", requireLogin, async (req, res) => {
+// ========================
+//   ȘTERGE JOC
+// ========================
+app.post("/admin/delete/:id", async (req, res) => {
   try {
     await db.query("DELETE FROM games WHERE id = $1", [req.params.id]);
     res.redirect("/admin");
@@ -120,9 +76,9 @@ app.post("/admin/delete/:id", requireLogin, async (req, res) => {
 });
 
 
-// ==========================
-// START SERVER
-// ==========================
+// ========================
+//   PORNEȘTE SERVERUL
+// ========================
 app.listen(process.env.PORT || 8080, () => {
   console.log("Server pornit pe portul 8080");
 });

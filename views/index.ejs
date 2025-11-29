@@ -23,165 +23,74 @@
 
 <main class="hb-main">
 
+  <!-- PAGE LAYOUT -->
+  <div class="hb-layout">
 
-  <!-- FEATURED -->
-  <section class="featured-section">
-    <h2 class="featured-title">În curând...</h2>
+    <!-- SIDEBAR -->
+    <aside class="hb-sidebar">
+      <div class="hb-sidebar-title">Library</div>
 
-    <% if (featuredGames.length === 0) { %>
-      <p style="opacity:.7; font-size:14px;">Nu există jocuri în Featured.</p>
-    <% } else { %>
+      <button class="hb-sidebar-item is-active" data-filter="all">
+        <span class="hb-sidebar-dot all"></span> Toate jocurile
+      </button>
 
-    <div class="featured-slider">
-      <button id="featured-prev" class="featured-arrow left">❮</button>
+      <button class="hb-sidebar-item" data-filter="steam">
+        <span class="hb-sidebar-dot steam"></span> Steam
+      </button>
 
-      <div id="featured-container">
-        <% featuredGames.forEach((g, idx) => { %>
-          <div class="featured-slide <%= idx === 0 ? 'active' : '' %>"
-               style="--bg:url('<%= g.imageurl %>')">
+      <button class="hb-sidebar-item" data-filter="itch">
+        <span class="hb-sidebar-dot itch"></span> itch.io
+      </button>
+    </aside>
 
-            <img src="<%= g.imageurl %>" class="featured-big-img">
 
-            <div class="featured-right">
-              <h3><%= g.title %></h3>
+    <!-- GAME GRID -->
+    <section class="hb-content">
+      <div class="hb-grid">
 
-              <% if (g.badge) { %>
-                <span class="popup-badge <%= g.badge.replace(' ', '') %>">
-                  <%= g.badge.toUpperCase() %>
-                </span>
-              <% } %>
+        <% games.forEach(g => { %>
+        <article class="hb-card" data-source="<%= g.source %>">
 
-              <p class="featured-genres"><%= g.genres %></p>
-
-              <a href="<%= g.link %>" class="featured-play-btn" target="_blank">▶ Joacă</a>
+          <% if (g.badge) { %>
+            <div class="game-badge-overlay badge-<%= g.badge.toLowerCase() %>">
+              <%= g.badge.toUpperCase() %>
             </div>
+          <% } %>
 
+          <div class="hb-card-image-wrap">
+            <img src="<%= g.imageurl %>" class="hb-card-image">
           </div>
-        <% }) %>
-      </div>
 
-      <button id="featured-next" class="featured-arrow right">❯</button>
-    </div>
+          <div class="hb-card-body">
+            <h3 class="hb-card-title"><%= g.title %></h3>
 
-    <% } %>
-  </section>
-
-
-
-
-  <!-- GAME GRID -->
-  <section class="hb-content">
-    <div class="hb-grid">
-
-      <% games.forEach(g => { %>
-
-      <article class="hb-card">
-
-        <% if (g.badge) { %>
-          <div class="game-badge-overlay badge-<%= g.badge.replace(' ', '') %>">
-            <%= g.badge.toUpperCase() %>
-          </div>
-        <% } %>
-
-        <div class="hb-card-image-wrap">
-          <img src="<%= g.imageurl %>" class="hb-card-image">
-        </div>
-
-        <div class="hb-card-body">
-          <h3 class="hb-card-title"><%= g.title %></h3>
-          <p class="hb-card-genres"><%= g.genres %></p>
-
-          <div class="hb-card-bottom">
-            <a href="<%= g.link %>" target="_blank" class="hb-button-primary">
-              ▶ Joacă
-            </a>
-
-            <% if (g.source === 'steam') { %>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg"
-                   class="hb-source-icon">
-
-            <% } else if (g.source === 'itch') { %>
-              <img src="https://static-00.iconduck.com/assets.00/itch-io-icon.png"
-                   class="hb-source-icon">
+            <% if (g.genres) { %>
+              <p class="hb-card-genres"><%= g.genres %></p>
             <% } %>
 
+            <div class="hb-card-bottom">
+              <a href="<%= g.link %>" target="_blank" class="hb-button-primary">▶ Joacă</a>
+
+              <% if (g.source === 'steam') { %>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg" class="hb-source-icon">
+              <% } else if (g.source === 'itch') { %>
+                <img src="https://static-00.iconduck.com/assets.00/itch-io-icon-2048x2048-7q3p8x7n.png" class="hb-source-icon">
+              <% } %>
+
+            </div>
           </div>
-        </div>
-      </article>
+        </article>
+        <% }) %>
 
-      <% }) %>
-
-    </div>
-  </section>
+      </div>
+    </section>
+  </div>
 
 </main>
 
 <footer class="hb-footer">
   HYGHBYTE 2025 — Not affiliated with Steam or itch.io.
 </footer>
-
-
-
-<!-- FEATURED -->
-<script>
-const slides = document.querySelectorAll(".featured-slide");
-let index = 0;
-
-function showSlide(i) {
-  slides.forEach(s => s.classList.remove("active"));
-  slides[i].classList.add("active");
-}
-
-if (slides.length > 0) {
-  document.getElementById("featured-prev").onclick = () => {
-    index = (index - 1 + slides.length) % slides.length;
-    showSlide(index);
-  };
-  document.getElementById("featured-next").onclick = () => {
-    index = (index + 1) % slides.length;
-    showSlide(index);
-  };
-}
-</script>
-
-
-<!-- RANDOM GAME POPUP -->
-<script>
-const games = <%- JSON.stringify(games) %>;
-const caseBtn = document.getElementById("caseBtn");
-
-function openCase() {
-  const g = games[Math.floor(Math.random() * games.length)];
-  document.getElementById("popup-title").innerText = g.title;
-  document.getElementById("popup-genres").innerText = g.genres;
-  document.getElementById("popup-img").src = g.imageurl;
-  document.getElementById("popup-play").href = g.link;
-  document.getElementById("popup-bg").style.backgroundImage = `url('${g.imageurl}')`;
-  document.getElementById("gamePopup").classList.remove("hidden");
-}
-
-function closePopup() {
-  document.getElementById("gamePopup").classList.add("hidden");
-}
-
-caseBtn.addEventListener("click", openCase);
-</script>
-
-
-<!-- POPUP HTML -->
-<div id="gamePopup" class="popup hidden">
-
-  <div id="popup-bg" class="popup-bg"></div>
-
-  <div class="popup-content">
-    <img id="popup-img" class="popup-img">
-    <h2 id="popup-title" class="popup-title"></h2>
-    <p id="popup-genres" class="popup-genres"></p>
-    <a id="popup-play" class="popup-play-btn" target="_blank">▶ Joacă</a>
-    <button onclick="closePopup()" class="popup-close-btn">Închide</button>
-  </div>
-
-</div>
 
 </body>
 </html>

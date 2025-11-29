@@ -1,73 +1,89 @@
-/* ===== LOGIN ===== */
-.login-body {
-  background: #0d0d0d;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-family: Arial;
+body {
+    background: #0b0b0b;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 40px;
 }
 
-.login-box {
-  background: #1c1c1c;
-  padding: 30px;
-  width: 350px;
-  border-radius: 15px;
-  box-shadow: 0 0 20px #000;
-  text-align: center;
+.title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 30px;
 }
 
-.login-box h2 {
-  margin-bottom: 20px;
-  color: white;
-}
-
-.login-box input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
-  background: #111;
-  border: none;
-  border-radius: 6px;
-  color: white;
-}
-
-.login-box button {
-  width: 100%;
-  padding: 12px;
-  background: #00ff55;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* ===== ADMIN ===== */
-
-.logout-btn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: #ff4444;
-  padding: 10px 14px;
-  border-radius: 6px;
-  color: white;
-  text-decoration: none;
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
 }
 
 .box {
-  background: #171717;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 25px;
+    background: #151515;
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid #222;
 }
 
-table {
-  width: 100%;
-  color: white;
+h2 {
+    margin-top: 0;
 }
 
-td {
-  padding: 10px;
-  border-bottom: 1px solid #333;
+.input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: none;
+    font-size: 15px;
+}
+
+.btn {
+    background: #00c853;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn:hover {
+    background: #00e060;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    background: #222;
+    padding: 12px;
+    text-align: left;
+}
+
+.table td {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.delete-btn {
+    background: #d50000;
+    border: none;
+    padding: 8px 15px;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background: #ff1744;
+}
+
+/* HIDE SWITCHABLE FIELDS */
+.steam-only,
+.itch-only {
+    display: none;
 }
