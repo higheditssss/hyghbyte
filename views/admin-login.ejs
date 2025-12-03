@@ -1,33 +1,60 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <title>HyghByte Admin</title>
-  <link rel="stylesheet" href="/admin.css">
+<meta charset="UTF-8">
+<title>Admin Login</title>
+<style>
+    body {
+        background: #0d0d0d;
+        font-family: Arial;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: white;
+    }
+    .box {
+        background: #1e1e1e;
+        padding: 30px;
+        border-radius: 12px;
+        width: 300px;
+        text-align: center;
+        box-shadow: 0 0 10px rgba(0,0,0,0.6);
+    }
+    input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: none;
+        margin-bottom: 12px;
+    }
+    button {
+        width: 100%;
+        padding: 10px;
+        background: #e50914;
+        border: none;
+        color: white;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    p {
+        color: #ff6b6b;
+        font-size: 14px;
+    }
+</style>
 </head>
-<body class="admin-login-page">
 
-<div class="admin-login-box">
-  <h1 class="admin-title">HyghByte Admin</h1>
-  <p class="admin-subtitle">Introdu Token-ul Admin</p>
-
-  <% if (error) { %>
-    <p class="admin-error"><%= error %></p>
-  <% } %>
-
-  <form method="POST" action="/admin-login" class="admin-form">
-    <input 
-      type="password"
-      name="token"
-      placeholder="Admin Token"
-      required
-      class="admin-input"
-    >
-    <button type="submit" class="admin-btn">
-      Accesează Panou
-    </button>
-  </form>
+<body>
+<div class="box">
+    <h2>Admin Login</h2>
+    <% if (error) { %>
+      <p><%= error %></p>
+    <% } %>
+    <form method="POST" action="/admin-login">
+        <input type="password" name="password" placeholder="Introdu parola" required>
+        <button type="submit">Autentificare</button>
+    </form>
 </div>
-
 </body>
 </html>
