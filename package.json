@@ -1,20 +1,19 @@
 {
   "name": "hyghbyte",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "server.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon server.js",
-    "start": "cross-env NODE_ENV=production node server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "dependencies": {
-    "cross-env": "^10.1.0",
-    "dotenv": "^17.2.3",
-    "ejs": "^3.1.9",
+    "ejs": "^3.1.10",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "node-fetch": "^3.3.2",
-    "pg": "^8.11.3",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^5.1.6",
+    "dotenv": "^17.2.3",
+    "pg": "^8.11.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"

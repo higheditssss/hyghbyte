@@ -1,24 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="ro">
 <head>
-  <title>Login Admin</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <meta charset="UTF-8">
+  <title>HyghByte Admin</title>
+  <link rel="stylesheet" href="/admin.css">
 </head>
-<body class="admin-page">
+<body class="admin-login-page">
 
-<div class="admin-wrapper">
-  <div class="admin-card">
-    <h2>Introdu parola</h2>
+<div class="admin-login-box">
+  <h1 class="admin-title">HyghByte Admin</h1>
+  <p class="admin-subtitle">Introdu Token-ul Admin</p>
 
-    <form method="POST" action="/admin" class="admin-form">
-      <input type="password" name="password" placeholder="Parolă" required>
-      <button class="admin-btn">Login</button>
+  <% if (error) { %>
+    <p class="admin-error"><%= error %></p>
+  <% } %>
 
-      <% if (error) { %>
-        <p style="color:#ff4444;margin-top:10px;"><%= error %></p>
-      <% } %>
-    </form>
-  </div>
+  <form method="POST" action="/admin-login" class="admin-form">
+    <input 
+      type="password"
+      name="token"
+      placeholder="Admin Token"
+      required
+      class="admin-input"
+    >
+    <button type="submit" class="admin-btn">
+      Accesează Panou
+    </button>
+  </form>
 </div>
 
 </body>

@@ -1,58 +1,129 @@
 <!DOCTYPE html>
-<html>
+<html lang="ro">
 <head>
-  <title>Admin</title>
-  <style>
-    body { background:#111; color:white; font-family:sans-serif; padding:20px; }
-    input,select { width:100%; padding:8px; margin-bottom:10px; }
-    .box { background:#222; padding:20px; border-radius:10px; margin-bottom:20px; }
-    table { width:100%; margin-top:20px; }
-    td { padding:8px; border-bottom:1px solid #444; }
-    button { padding:6px 14px; }
-  </style>
+  <meta charset="UTF-8" />
+  <title>Admin Panel — HYGHBYTE</title>
+  <link rel="stylesheet" href="/admin.css" />
 </head>
 
 <body>
-<h1>Admin Panel</h1>
 
-<div class="box">
-  <h3>Adaugă joc</h3>
-
-  <form action="/admin/add" method="POST">
-    <input type="text" name="title" placeholder="Titlu" required>
-    <select name="source">
-      <option value="steam">Steam</option>
-      <option value="itch">itch.io</option>
-    </select>
-    <input type="text" name="link" placeholder="Link joc" required>
-    <input type="text" name="imageurl" placeholder="URL poză" required>
-    <input type="text" name="genres" placeholder="Genuri (ex: Horror, Action)">
-    <input type="text" name="badge" placeholder="FREE / PAID / DEMO">
-
-    <button type="submit">Adaugă</button>
+<header class="admin-header">
+  <h1>HYGHBYTE — ADMIN PANEL</h1>
+  <form action="/logout" method="POST">
+    <button class="logout-btn">Logout</button>
   </form>
-</div>
+</header>
+
+<main class="admin-main">
+
+  <% if (error) { %>
+    <div class="error-box"><%= error %></div>
+  <% } %>
+
+  <section class="admin-section">
+
+    <h2>Adaugă un joc</h2>
+
+    <form method="POST" action="/addGame" class="admin-form">
+
+      <label>Sursa jocului:</label>
+      <select name="source" id="sourceSelect" required>
+        <option value="steam">Steam</option>
+        <option value="itch">itch.io</option>
+      </select>
+
+      <!-- STEAM MODE -->
+      <div id="steamInput">
+        <label>ID Steam:</label>
+        <input type="text" name="steamId" placeholder="Ex: 570">
+      </div>
+
+      <!-- ITCH MODE -->
+      <div id="itchInputs" style="display:none;">
+        <label>Titlu:</label>
+        <input type="text" name="title">
+
+        <label>Genuri:</label>
+        <input type="text" name="genres">
+
+        <label>Link joc:</label>
+        <input type="text" name="link">
+
+        <label>URL poză copertă:</label>
+        <input type="text" name="imageUrl">
+      </div>
+
+      <label>Badge (optional):</label>
+      <select name="badge">
+        <option value="">Nimic</option>
+        <option value="FREE">FREE</option>
+        <option value="PAID">PAID</option>
+        <option value="DEMO">DEMO</option>
+        <option value="COMING SOON">COMING SOON</option>
+      </select>
+
+      <button type="submit" class="admin-btn">Adaugă joc</button>
+    </form>
+
+  </section>
 
 
-<div class="box">
-  <h3>Jocuri existente</h3>
-  <table>
-    <% games.forEach(g => { %>
-      <tr>
-        <td><%= g.id %></td>
-        <td><%= g.title %></td>
-        <td><%= g.source %></td>
-        <td><%= g.genres %></td>
-        <td><%= g.badge %></td>
-        <td>
-          <form action="/admin/delete/<%= g.id %>" method="POST">
-            <button type="submit">Șterge</button>
+
+  <section class="admin-section">
+    <h2>Lista jocurilor</h2>
+
+    <div class="game-list">
+
+      <% games.forEach(g => { %>
+        <div class="game-row">
+
+          <img src="<%= g.imageUrl %>" class="game-thumb">
+
+          <div class="game-info">
+            <h3><%= g.title %></h3>
+            <p><strong>Sursă:</strong> <%= g.source %></p>
+
+            <% if (g.badge) { %>
+              <span class="badge badge-<%= g.badge.replace(' ','') %>">
+                <%= g.badge %>
+              </span>
+            <% } %>
+
+            <p><%= g.genres %></p>
+          </div>
+
+          <form method="POST" action="/deleteGame/<%= g.id %>">
+            <button class="del-btn">Șterge</button>
           </form>
-        </td>
-      </tr>
-    <% }) %>
-  </table>
-</div>
+
+        </div>
+      <% }) %>
+
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+  const sourceSelect = document.getElementById("sourceSelect");
+  const steamBox = document.getElementById("steamInput");
+  const itchBox = document.getElementById("itchInputs");
+
+  function updateForm() {
+    if (sourceSelect.value === "steam") {
+      steamBox.style.display = "block";
+      itchBox.style.display = "none";
+    } else {
+      steamBox.style.display = "none";
+      itchBox.style.display = "block";
+    }
+  }
+
+  sourceSelect.addEventListener("change", updateForm);
+  updateForm();
+</script>
 
 </body>
 </html>

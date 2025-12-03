@@ -1,27 +1,22 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Login Admin</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="/admin.css" />
 </head>
+<body class="login-page">
 
-<body class="admin-page">
+<div class="login-box">
+  <h2>Admin Login</h2>
+  <% if(error){ %>
+  <p class="error"><%= error %></p>
+  <% } %>
 
-<div class="admin-wrapper">
-  <div class="admin-card">
-    <h2>Introdu parola administrator</h2>
+  <form method="POST" action="/admin-login">
+    <input type="password" name="password" placeholder="Parolă" required>
+    <button type="submit" class="adm-btn">Login</button>
+  </form>
 
-    <form action="/login" method="POST" class="admin-form">
-      <input type="password" name="password" placeholder="Parolă admin" required>
-      <button class="admin-btn">Login</button>
-
-      <% if (error) { %>
-        <p class="error-box"><%= error %></p>
-      <% } %>
-    </form>
-  </div>
 </div>
-
 </body>
 </html>

@@ -1,339 +1,99 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8" />
-  <title>HYGHBYTE // Admin Panel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/styles.css" />
-
-  <style>
-    /* ADMIN LAYOUT */
-    .admin-container {
-      max-width: 1080px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-
-    .admin-card {
-      background: #0f0f0f;
-      border: 1px solid #222;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 30px;
-      box-shadow: 0 0 16px rgba(255,0,50,0.09);
-    }
-
-    .admin-title {
-      color: #ff2a39;
-      font-size: 1.1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.13em;
-      margin-bottom: 16px;
-    }
-
-    .admin-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px,1fr));
-      gap: 16px;
-    }
-
-    .admin-field label {
-      font-size: .85rem;
-      color: #bbb;
-    }
-
-    .admin-input, input, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 6px;
-      background: #181818;
-      border: 1px solid #333;
-      color: #eee;
-      border-radius: 8px;
-    }
-
-    .admin-btn {
-      background: #ff2a39;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 999px;
-      cursor: pointer;
-      color: white;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      transition: 0.15s;
-    }
-    .admin-btn:hover {
-      background: #ff3d4d;
-    }
-
-    /* Table */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #0d0d0d;
-      border: 1px solid #222;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    th {
-      padding: 12px;
-      background: #181818;
-      color: #ff3d4d;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-    td {
-      padding: 12px;
-      border-bottom: 1px solid #222;
-      color: #ddd;
-    }
-    a.edit-link {
-      color: #ff3d4d;
-      font-weight: bold;
-    }
-
-    /* Muzică */
-    .music-field {
-      display: none;
-    }
-
-  </style>
+  <meta charset="UTF-8">
+  <title>HYGHBYTE — Admin Panel</title>
+  <link rel="stylesheet" href="/admin.css">
 </head>
-
 <body>
 
-<header class="hb-header">
-  <div class="hb-header-left">
-    <span class="hb-logo-main">HYGHBYTE</span>
-    <span class="hb-logo-sub">ADMIN PANEL</span>
-  </div>
-
-  <div class="hb-header-right">
-    <button id="themeToggle" class="hb-header-btn">🌙</button>
-
-    <form method="POST" action="/admin/logout">
-      <button class="hb-header-btn hb-random-btn" style="padding:6px 14px;">Logout</button>
-    </form>
-  </div>
+<header class="admin-header">
+  <h1>HYGHBYTE — Admin Panel</h1>
+  <a class="logout-btn" href="/admin-logout">Logout</a>
 </header>
 
-<div class="admin-container">
+<section class="admin-section">
+  <h2>Adaugă Joc</h2>
 
-  <!-- 🔴 ADAUGĂ JOC -->
-  <section class="admin-card">
-    <h2 class="admin-title">Adaugă joc</h2>
+  <form method="POST" action="/admin-add" id="addGameForm">
 
-    <form method="POST" action="/admin/games" class="admin-grid">
+    <select name="type" id="typeSelect">
+      <option value="steam">Steam</option>
+      <option value="manual">Manual / itch.io</option>
+    </select>
 
-      <div class="admin-field">
-        <label>Sursă</label>
-        <select name="source" id="sourceSelect" class="admin-input">
-          <option value="steam">Steam</option>
-          <option value="itch">itch.io</option>
-          <option value="manual">Manual</option>
-        </select>
-      </div>
+    <input type="text" name="steamId" id="steamId" placeholder="Steam App ID">
 
-      <div class="admin-field steam-only">
-        <label>Steam ID</label>
-        <input name="steamId" class="admin-input">
-      </div>
+    <input type="text" name="title" id="title" placeholder="Titlu (manual)"
+           class="manual-field" style="display:none">
 
-      <div class="admin-field steam-only">
-        <label>Mod preluare</label><br/>
-        <label><input type="radio" name="steamMode" value="auto" checked> Auto</label><br>
-        <label><input type="radio" name="steamMode" value="manual"> Manual</label>
-      </div>
+    <input type="text" name="genres" id="genres" placeholder="Genuri (FPS, etc)"
+           class="manual-field" style="display:none">
 
-      <div class="admin-field">
-        <label>Titlu</label>
-        <input name="title" class="admin-input">
-      </div>
+    <input type="text" name="link" id="link" placeholder="Link joc"
+           class="manual-field" style="display:none">
 
-      <div class="admin-field">
-        <label>Link</label>
-        <input name="link" class="admin-input">
-      </div>
+    <input type="text" name="imageUrl" id="imageUrl" placeholder="URL poză"
+           class="manual-field" style="display:none">
 
-      <div class="admin-field">
-        <label>Imagine (URL)</label>
-        <input name="imageUrl" class="admin-input">
-      </div>
+    <label class="featured-check">
+      <input type="checkbox" name="featured">
+      ⭐ Featured
+    </label>
 
-      <div class="admin-field">
-        <label>Genuri</label>
-        <input name="genres" class="admin-input">
-      </div>
+    <button type="submit" class="add-btn">+ Adaugă joc</button>
+  </form>
+</section>
 
-      <button class="admin-btn" style="grid-column:1/-1;">+ Adaugă joc</button>
+<section class="admin-section">
+  <h2>Jocuri existente</h2>
 
-    </form>
-  </section>
+  <table class="admin-table">
+    <tr>
+      <th>ID</th>
+      <th>Titlu</th>
+      <th>Feat</th>
+      <th>Vizibil</th>
+      <th>Edit</th>
+      <th>Stergere</th>
+    </tr>
 
-
-
-  <!-- ❄️ NINSOARE -->
-  <section class="admin-card">
-    <h2 class="admin-title">Ninsoare</h2>
-    <form method="POST" action="/admin/settings/snow">
-      <label>
-        <input type="checkbox" name="snow" value="1"
-          <% if (settings.snow) { %> checked <% } %> >
-        Activează ninsoarea
-      </label>
-      <br><br>
-      <button class="admin-btn">Salvează</button>
-    </form>
-  </section>
-
-
-
-  <!-- 🎄 LUMINI -->
-  <section class="admin-card">
-    <h2 class="admin-title">Lumini de Crăciun</h2>
-
-    <form method="POST" action="/admin/settings/lights">
-      <label>Mod lumini</label>
-      <select name="lightsMode" class="admin-input">
-        <option value="off" <% if(settings.lightsMode==='off'){%>selected<%}%>>Oprit</option>
-        <option value="classic" <% if(settings.lightsMode==='classic'){%>selected<%}%>>Clasic</option>
-        <option value="random" <% if(settings.lightsMode==='random'){%>selected<%}%>>Random</option>
-      </select>
-
-      <br><br>
-      <button class="admin-btn">Salvează</button>
-    </form>
-
-  </section>
-
-
-
-  <!-- 🎵 MUZICĂ -->
-  <section class="admin-card">
-    <h2 class="admin-title">Muzică de fundal</h2>
-
-    <form method="POST" action="/admin/settings/music" class="admin-grid">
-
-      <div class="admin-field">
-        <label>
-          <input type="checkbox" name="music_enabled" value="1"
-          <% if(settings.music_enabled){%> checked <%}%> >
-          Activează muzica
-        </label>
-      </div>
-
-      <div class="admin-field">
-        <label>Tip</label>
-        <select name="music_type" id="musicType" class="admin-input">
-          <option value="">Nimic</option>
-          <option value="mp3" <% if(settings.music_type==='mp3'){%>selected<%}%>>MP3 direct</option>
-          <option value="youtube" <% if(settings.music_type==='youtube'){%>selected<%}%>>YouTube</option>
-        </select>
-      </div>
-
-      <div class="admin-field music-field music-mp3">
-        <label>URL MP3</label>
-        <input type="url" name="music_mp3_url" class="admin-input"
-          value="<%= settings.music_type==='mp3'?settings.music_url:'' %>"
-          placeholder="https://server.com/song.mp3">
-      </div>
-
-      <div class="admin-field music-field music-yt">
-        <label>Link YouTube</label>
-        <input type="url" name="music_yt_url" class="admin-input"
-          value="<%= settings.music_type==='youtube'?settings.music_url:'' %>"
-          placeholder="https://youtube.com/watch?v=...">
-      </div>
-
-      <div class="admin-field" style="grid-column:1/-1;">
-        <label>Titlul melodiei</label>
-        <input type="text" name="music_title" class="admin-input"
-          value="<%= settings.music_title || '' %>">
-      </div>
-
-      <button class="admin-btn admin-submit">Salvează muzica</button>
-    </form>
-  </section>
-
-
-
-  <!-- 🕹 JOCURI -->
-  <section class="admin-card">
-    <h2 class="admin-title">Jocuri existente</h2>
-
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Titlu</th>
-          <th>Sursă</th>
-          <th>Link</th>
-          <th>Editare</th>
-          <th>Ștergere</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <% games.forEach(game => { %>
-          <tr>
-            <td><%= game.id %></td>
-            <td><%= game.title %></td>
-            <td><%= game.source %></td>
-            <td>
-              <% if(game.link){ %>
-                <a href="<%=game.link%>" target="_blank" style="color:#ff3d4d;">link</a>
-              <% } %>
-            </td>
-            <td><a href="/admin/games/<%=game.id%>/edit" class="edit-link">Edit</a></td>
-            <td>
-              <form method="POST" action="/admin/games/<%=game.id%>/delete">
-                <button class="admin-btn" style="background:#ff2a39;">X</button>
-              </form>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  </section>
-
-</div>
+    <% games.forEach(g => { %>
+    <tr>
+      <td><%= g.id %></td>
+      <td><%= g.title %></td>
+      <td><%= g.featured ? "⭐" : "" %></td>
+      <td><%= g.visible ? "👁" : "🚫" %></td>
+      <td><a href="/admin-edit/<%= g.id %>" class="edit-btn">✏️</a></td>
+      <td><a href="/admin-delete/<%= g.id %>" class="delete-btn">🗑️</a></td>
+    </tr>
+    <% }) %>
+  </table>
+</section>
 
 <script>
-// ===== THEME =====
-const th = document.getElementById("themeToggle");
-function setTheme(mode){
-  document.body.classList.toggle("light", mode==="light");
-  th.innerHTML = mode==="light" ? "🌙":"☀️";
-  localStorage.setItem("hyghbyteTheme", mode);
-}
-setTheme(localStorage.getItem("hyghbyteTheme") || "dark");
-th.onclick = ()=> setTheme(document.body.classList.contains("light")?"dark":"light");
+// Show/Hide inputs when switching Steam / Manual
+const typeSelect = document.getElementById("typeSelect");
+const manualFields = document.querySelectorAll(".manual-field");
+const steamId = document.getElementById("steamId");
 
-// ===== STEAM FIELD =====
-const srcSel = document.getElementById("sourceSelect");
-const steamOnly = document.querySelectorAll(".steam-only");
-function updateSteam(){
-  steamOnly.forEach(el => el.style.display = srcSel.value==="steam"?"block":"none");
-}
-updateSteam();
-srcSel.addEventListener("change", updateSteam);
+typeSelect.addEventListener("change", () => {
+  if (typeSelect.value === "steam") {
+    manualFields.forEach(f => f.style.display = "none");
+    steamId.style.display = "inline-block";
+  } else {
+    manualFields.forEach(f => f.style.display = "inline-block");
+    steamId.style.display = "none";
+  }
+});
 
-// ===== MUZICĂ =====
-const typeSel = document.getElementById("musicType");
-const fields = document.querySelectorAll(".music-field");
-function updateMusicFields(){
-  fields.forEach(f => f.style.display="none");
-
-  if (typeSel.value==="mp3")
-    document.querySelector(".music-mp3").style.display="block";
-
-  if (typeSel.value==="youtube")
-    document.querySelector(".music-yt").style.display="block";
-}
-updateMusicFields();
-typeSel.addEventListener("change", updateMusicFields);
+// Auto-fetch Steam title & other fields
+document.getElementById("addGameForm").addEventListener("submit", (e) => {
+  if (typeSelect.value === "steam" && !steamId.value.trim()) {
+    e.preventDefault();
+    alert("Introdu un Steam App ID");
+  }
+});
 </script>
 
 </body>

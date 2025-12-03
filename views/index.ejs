@@ -1,210 +1,92 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8" />
-  <title>HYGHBYTE // Game Vault</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/styles.css" />
+  <meta charset="UTF-8">
+  <title>HYGHBYTE // GAME VAULT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/styles.css">
 </head>
 
 <body>
 
 <header class="hb-header">
-  <div>
-    <span class="hb-logo-main">HYGHBYTE</span>
-    <span class="hb-logo-sub">BETA</span>
+  <div class="hb-header-left">
+    <a href="/" class="hb-logo-main">HYGHBYTE</a>
+    <span class="hb-logo-sub">GAME VAULT</span>
   </div>
 
   <div class="hb-header-right">
-    <a href="https://highstatss.vercel.app/" target="_blank" class="hb-kick-btn">HIGHSTATS</a>
-    <button id="caseBtn" class="hb-random-btn">RANDOM GAME</button>
+    <input id="searchInput" class="hb-search" type="text" placeholder="🔍 Caută jocuri...">
+    <button id="caseBtn" class="hb-random-btn">🎲 Random</button>
   </div>
 </header>
 
 <main class="hb-main">
 
-  <!-- FEATURED SLIDER -->
+  <% if (featuredGames && featuredGames.length > 0) { %>
   <section class="featured-section">
-    <h2 class="featured-title">În curând...</h2>
-
-    <% if (featuredGames.length === 0) { %>
-      <p style="opacity:.7; font-size:14px;">Nu există jocuri în Featured.</p>
-    <% } else { %>
+    <h2 class="featured-title">JOCURI SUGERATE</h2>
 
     <div class="featured-slider">
-      <button id="featured-prev" class="featured-arrow left">❮</button>
 
-      <div id="featured-container">
-        <% featuredGames.forEach((g, idx) => { %>
-          <div class="featured-slide <%= idx === 0 ? 'active' : '' %>"
-               style="--bg:url('<%= g.imageurl %>')">
+      <button id="featured-prev" class="featured-arrow">❮</button>
 
-            <img src="<%= g.imageurl %>" class="featured-big-img">
-
-            <div class="featured-right">
-              <h3><%= g.title %></h3>
-
-              <% if (g.badge) { %>
-                <span class="popup-badge <%= g.badge.toLowerCase() %>">
-                  <%= g.badge.toUpperCase() %>
-                </span>
-              <% } %>
-
-              <% if (g.genres) { %>
-                <p class="featured-genres"><%= g.genres %></p>
-              <% } %>
-
-              <a href="<%= g.link %>" class="featured-play-btn" target="_blank">
-                ▶ Joacă acum
-              </a>
+      <div class="featured-container single">
+        
+        <div id="featured-active" class="featured-slide active">
+          <img id="featured-bg" class="featured-img-bg" src="">
+          <div class="featured-info">
+            <img id="featured-cover" class="featured-cover" src="">
+            <div class="featured-text">
+              <h3 id="featured-title"></h3>
+              <p id="featured-genres"></p>
+              <a id="featured-link" target="_blank" class="featured-play-now">▶ Joacă acum</a>
             </div>
           </div>
-        <% }) %>
+        </div>
+
       </div>
 
-      <button id="featured-next" class="featured-arrow right">❯</button>
+      <button id="featured-next" class="featured-arrow">❯</button>
     </div>
-
-    <% } %>
   </section>
-
-  <!-- LIBRARY + GAMES -->
-  <div class="hb-layout">
-
-    <aside class="hb-sidebar">
-      <div class="hb-sidebar-title">Library</div>
-
-      <button class="hb-sidebar-item is-active" data-filter="all">
-        <span class="hb-sidebar-dot all"></span> Toate jocurile
-      </button>
-
-      <button class="hb-sidebar-item" data-filter="steam">
-        <span class="hb-sidebar-dot steam"></span> Steam
-      </button>
-
-      <button class="hb-sidebar-item" data-filter="itch">
-        <span class="hb-sidebar-dot itch"></span> itch.io
-      </button>
-    </aside>
+  <% } %>
 
 
-    <!-- GAME GRID -->
-    <section class="hb-content">
-      <div class="hb-grid">
-
-        <% games.forEach(g => { %>
-        <article class="hb-card" data-source="<%= g.source %>">
-
-          <% if (g.badge) { %>
-            <div class="game-badge-overlay badge-<%= g.badge.toLowerCase() %>">
-              <%= g.badge.toUpperCase() %>
-            </div>
-          <% } %>
-
-          <div class="hb-card-image-wrap">
-            <img src="<%= g.imageurl %>" class="hb-card-image">
-          </div>
-
-          <div class="hb-card-body">
-            <h3 class="hb-card-title"><%= g.title %></h3>
-
-            <% if (g.genres) { %>
-              <p class="hb-card-genres"><%= g.genres %></p>
-            <% } %>
-
-            <div class="hb-card-bottom">
-              <a href="<%= g.link %>" target="_blank" class="hb-button-primary">
-                ▶ Joacă
-              </a>
-
-              <% if (g.source === 'steam') { %>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg"
-                     class="hb-source-icon">
-              <% } else if (g.source === 'itch') { %>
-                <img src="https://static-00.iconduck.com/assets.00/itch-io-icon-2048x2048-7q3p8x7n.png"
-                     class="hb-source-icon">
-              <% } %>
-
-            </div>
-          </div>
-        </article>
-        <% }) %>
-
+  <section class="hb-grid">
+    <% games.forEach(g => { %>
+    <article class="hb-card" data-title="<%= g.title.toLowerCase() %>">
+      <img src="<%= g.imageUrl || '/fallback.jpg' %>" class="hb-card-img">
+      <div class="hb-card-info">
+        <h3><%= g.title %></h3>
+        <p><%= g.genres %></p>
+        <a href="<%= g.link %>" target="_blank" class="hb-button-primary">▶ Joacă acum</a>
       </div>
-    </section>
-  </div>
+    </article>
+    <% }) %>
+  </section>
 
 </main>
 
-<footer class="hb-footer">
-  HYGHBYTE 2025 — Not affiliated with Steam or itch.io.
-</footer>
 
 <!-- RANDOM GAME POPUP -->
 <div id="gamePopup" class="popup hidden">
-  <div id="popup-bg" class="popup-bg"></div>
-
+  <div class="popup-blur"></div>
   <div class="popup-content">
-      <img id="popup-img" class="popup-img">
-
-      <h2 id="popup-title"></h2>
-      <p id="popup-genres"></p>
-
-      <a id="popup-play" class="popup-play-btn" target="_blank">▶ Joacă</a>
-      <button onclick="closePopup()" class="popup-close-btn">Închide</button>
+    <img id="popup-img" class="popup-img">
+    <h2 id="popup-title" class="popup-title"></h2>
+    <p id="popup-genres"></p>
+    <a id="popup-play" class="popup-play-btn" target="_blank">▶ Joacă acum</a>
+    <button onclick="closePopup()" class="popup-close-btn">×</button>
   </div>
 </div>
 
-
-<!-- SCRIPTS -->
 <script>
-const slides = document.querySelectorAll(".featured-slide");
-let index = 0;
-
-function showSlide(i) {
-  slides.forEach(s => s.classList.remove("active"));
-  slides[i].classList.add("active");
-}
-
-if (slides.length > 0) {
-  document.getElementById("featured-prev").onclick = () => {
-    index = (index - 1 + slides.length) % slides.length;
-    showSlide(index);
-  };
-  document.getElementById("featured-next").onclick = () => {
-    index = (index + 1) % slides.length;
-    showSlide(index);
-  };
-}
+const featuredGames = <%- JSON.stringify(featuredGames) %>;
+const games = <%- JSON.stringify(games) %>;
 </script>
 
-<!-- RANDOM GAME SCRIPT -->
-<script>
-  const allGames = <%- JSON.stringify(games) %>;
-  const randomBtn = document.getElementById("caseBtn");
-
-  function openRandom() {
-    if (!allGames.length) return;
-
-    const g = allGames[Math.floor(Math.random() * allGames.length)];
-
-    document.getElementById("popup-title").innerText = g.title;
-    document.getElementById("popup-genres").innerText = g.genres || "";
-    document.getElementById("popup-img").src = g.imageurl;
-    document.getElementById("popup-play").href = g.link;
-
-    document.getElementById("popup-bg").style.backgroundImage =
-      `url('${g.imageurl}')`;
-
-    document.getElementById("gamePopup").classList.remove("hidden");
-  }
-
-  function closePopup() {
-    document.getElementById("gamePopup").classList.add("hidden");
-  }
-
-  randomBtn.addEventListener("click", openRandom);
-</script>
+<script src="/script.js"></script>
 
 </body>
 </html>

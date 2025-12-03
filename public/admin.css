@@ -1,89 +1,166 @@
+/* General Admin Theme */
 body {
-    background: #0b0b0b;
+    background: #0d0d0d;
     color: #fff;
-    font-family: Arial, sans-serif;
+    font-family: "Inter", Arial, sans-serif;
     margin: 0;
-    padding: 40px;
+    padding: 0;
 }
 
-.title {
-    font-size: 32px;
-    font-weight: bold;
-    margin-bottom: 30px;
-}
-
-.container {
+.admin-header {
+    width: 100%;
+    padding: 25px 50px;
     display: flex;
-    flex-direction: column;
-    gap: 30px;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 800;
+    font-size: 32px;
+    border-bottom: 2px solid #c40000;
+    background: #0d0d0d;
 }
 
-.box {
-    background: #151515;
-    padding: 25px;
+.logout-btn {
+    background: #ff1e1e;
+    padding: 12px 20px;
     border-radius: 10px;
-    border: 1px solid #222;
+    font-size: 17px;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.logout-btn:hover {
+    background: #d60000;
+    transform: scale(1.05);
+}
+
+/* Section styling */
+.admin-section {
+    width: 90%;
+    margin: 40px auto;
 }
 
 h2 {
-    margin-top: 0;
+    font-size: 26px;
+    margin-bottom: 15px;
 }
 
-.input {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 6px;
+/* Add Game Form */
+form {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: #111;
+    padding: 18px;
+    border-radius: 12px;
+}
+
+input,
+select {
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+}
+
+input:focus,
+select:focus {
+    border-color: #ff1e1e;
+}
+
+.add-btn {
+    background: #0074ff;
     border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
     font-size: 15px;
-}
-
-.btn {
-    background: #00c853;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 6px;
-    color: #000;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 10px;
+    color: #fff;
+    transition: 0.2s;
 }
 
-.btn:hover {
-    background: #00e060;
+.add-btn:hover {
+    background: #005bd4;
+    transform: scale(1.05);
 }
 
-.table {
+.featured-check {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    gap: 8px;
+}
+
+/* Table */
+.admin-table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 20px;
+    background: #111;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-.table th {
-    background: #222;
-    padding: 12px;
-    text-align: left;
+.admin-table th {
+    background: #181818;
+    padding: 14px 8px;
+    font-size: 14px;
+    text-align: center;
+    border-bottom: 2px solid #202020;
 }
 
-.table td {
-    padding: 10px;
-    border-bottom: 1px solid #333;
+.admin-table td {
+    padding: 12px 10px;
+    font-size: 14px;
+    text-align: center;
+    border-bottom: 1px solid #202020;
+}
+
+.admin-table tr:hover {
+    background: #161616;
+}
+
+/* Action Buttons */
+.edit-btn, .delete-btn {
+    font-size: 20px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.edit-btn {
+    color: #ffa600;
+}
+
+.edit-btn:hover {
+    color: #ff8800;
+    transform: scale(1.15);
 }
 
 .delete-btn {
-    background: #d50000;
-    border: none;
-    padding: 8px 15px;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
+    color: #ff3b3b;
 }
 
 .delete-btn:hover {
-    background: #ff1744;
+    color: #ff0000;
+    transform: scale(1.2);
 }
 
-/* HIDE SWITCHABLE FIELDS */
-.steam-only,
-.itch-only {
-    display: none;
+/* Mobile friendly */
+@media (max-width: 900px) {
+    form {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
 }
