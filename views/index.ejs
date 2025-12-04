@@ -3,62 +3,92 @@
 <head>
   <meta charset="UTF-8">
   <title>HYGHBYTE // GAME VAULT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/styles.css">
 </head>
 
 <body>
 
 <header class="hb-header">
-  <a href="/" class="hb-logo-main">HYGHBYTE</a>
-  <span class="hb-logo-sub">GAME VAULT</span>
+  <div class="hb-header-left">
+    <a class="hb-logo-main">HYGHBYTE</a>
+    <span class="hb-logo-sub">GAME VAULT</span>
+  </div>
+
+  <button id="randomBtn" class="hb-button-primary" style="border:none;cursor:pointer;">
+    🎲 Random Game
+  </button>
 </header>
 
 <main class="hb-main">
 
-  <% if (featuredGames.length > 0) { %>
+  <% if (featuredGames && featuredGames.length > 0) { %>
   <section class="featured-section">
-    <h2>JOCURI SUGERATE</h2>
+    <h2 class="featured-title">JOCURI SUGERATE</h2>
 
     <div class="featured-slider">
-
-      <button id="prev" class="featured-arrow">❮</button>
-
-      <div class="featured-slide">
-        <img id="featured-bg" class="featured-img-bg">
-        <div class="featured-info">
-          <img id="featured-cover" class="featured-cover">
-          <div class="featured-text">
-            <h3 id="featured-title"></h3>
-            <p id="featured-genres"></p>
-            <a id="featured-link" target="_blank" class="featured-play-now">▶ Joacă acum</a>
-          </div>
-        </div>
-      </div>
-
-      <button id="next" class="featured-arrow">❯</button>
+      <div id="featuredCard" class="featured-big"></div>
     </div>
   </section>
   <% } %>
 
   <section class="hb-grid">
     <% games.forEach(g => { %>
-      <article class="hb-card">
-        <img src="<%= g.imageUrl %>" class="hb-card-img">
-        <div class="hb-card-info">
-          <h3><%= g.title %></h3>
-          <p><%= g.genres %></p>
-          <a href="<%= g.link %>" target="_blank" class="hb-button-primary">▶ Joacă acum</a>
-        </div>
-      </article>
+    <article class="hb-card" data-title="<%= g.title.toLowerCase() %>">
+      <img src="<%= g.imageUrl %>" class="hb-card-img">
+      <div class="hb-card-info">
+        <h3><%= g.title %></h3>
+        <p><%= g.genres %></p>
+        <a href="<%= g.link %>" target="_blank" class="hb-button-primary">▶ Joacă acum</a>
+      </div>
+    </article>
     <% }) %>
   </section>
-
 </main>
 
+<!-- RANDOM GAME POPUP -->
+<div id="popup" class="popup hidden">
+  <div class="popup-blur"></div>
+  <div class="popup-content">
+      <img id="popup-img" class="popup-img">
+      <h2 id="popup-title" class="popup-title"></h2>
+      <p id="popup-genres" class="popup-genres"></p>
+      <a id="popup-link" target="_blank" class="hb-button-primary">▶ Joacă acum</a>
+      <button id="popup-close" class="popup-close-btn">×</button>
+  </div>
+</div>
+
 <script>
+const games = <%- JSON.stringify(games) %>;
 const featuredGames = <%- JSON.stringify(featuredGames) %>;
+
+// Featured random select always shown as one big banner
+if (featuredGames.length > 0) {
+  const f = featuredGames[Math.floor(Math.random() * featuredGames.length)];
+  document.getElementById("featuredCard").innerHTML = `
+      <div class="feat-img" style="background-image:url('${f.imageUrl}')"></div>
+      <div class="feat-info">
+          <h3>${f.title}</h3>
+          <p>${f.genres}</p>
+          <a href="${f.link}" target="_blank" class="hb-button-primary">▶ Joacă acum</a>
+      </div>
+  `;
+}
+
+// Popup section
+const popup = document.getElementById("popup");
+document.getElementById("randomBtn").onclick = () => {
+    const g = games[Math.floor(Math.random() * games.length)];
+    document.getElementById("popup-img").src = g.imageUrl;
+    document.getElementById("popup-title").textContent = g.title;
+    document.getElementById("popup-genres").textContent = g.genres;
+    document.getElementById("popup-link").href = g.link;
+    popup.classList.remove("hidden");
+};
+
+document.getElementById("popup-close").onclick = () => popup.classList.add("hidden");
+document.querySelector(".popup-blur").onclick = () => popup.classList.add("hidden");
 </script>
-<script src="/script.js"></script>
 
 </body>
 </html>
