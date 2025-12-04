@@ -1,85 +1,66 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <title>HYGHBYTE Admin</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #0d0d0d;
-            color: #fff;
-            padding: 20px;
-        }
-        h1 { margin-bottom: 20px; }
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 6px;
-            border: none;
-        }
-        button {
-            background: #e50914;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .game-box {
-            background: #141414;
-            padding: 12px;
-            border-radius: 10px;
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-        img {
-            width: 90px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 6px;
-        }
-        .del-btn {
-            background: #b20710;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Admin Panel ✔</title>
+<link rel="stylesheet" href="/styles.css">
 </head>
-<body>
+
+<body style="background:#0d0d0d;color:#fff;font-family:Arial;padding:20px;">
 
 <h1>Adaugă joc nou 🎮</h1>
 
-<form action="/admin/add?token=<%= token %>" method="POST">
-    <input type="text" name="title" placeholder="Nume joc" required>
-    <input type="text" name="genres" placeholder="Genuri (ex: Horror, Indie)" required>
-    <input type="url" name="imageUrl" placeholder="Imagine URL" required>
-    <input type="url" name="link" placeholder="Link joc" required>
-    
-    <label>
-        <input type="checkbox" name="featured">
-        Afișează la Featured ⭐
-    </label>
+<div style="margin-bottom:20px;">
+    <label><input type="radio" name="mode" value="steam" checked onclick="toggleMode()"> Steam ID</label>
+    <label style="margin-left:15px;"><input type="radio" name="mode" value="manual" onclick="toggleMode()"> Manual</label>
+</div>
 
-    <button type="submit">💾 Salvează joc</button>
+<!-- Steam Import -->
+<form id="steamForm" action="/admin/add?token=<%= token %>" method="POST">
+    <input type="hidden" name="source" value="steam">
+    <input type="number" name="steamId" placeholder="Steam AppID (ex: 620)" required>
+    <button type="submit" class="hb-button-primary">🎮 Importă din Steam</button>
 </form>
 
-<hr style="margin:20px 0;border-color:#333;">
+<!-- Manual Add -->
+<form id="manualForm" action="/admin/add?token=<%= token %>" method="POST" style="display:none;margin-top:15px;">
+    <input type="hidden" name="source" value="manual">
+    <input type="text" name="title" placeholder="Nume joc">
+    <input type="text" name="genres" placeholder="Genuri (ex: Horror, Indie)">
+    <input type="url" name="imageUrl" placeholder="Imagine URL">
+    <input type="url" name="link" placeholder="Link joc">
+    <label><input type="checkbox" name="featured"> Featured ⭐</label>
+    <button type="submit" class="hb-button-primary">💾 Salvează joc</button>
+</form>
+
+<hr style="margin:30px 0;border-color:#222;">
 
 <h2>Jocuri existente</h2>
 
+<% if (games.length === 0) { %>
+<p>Nu există jocuri încă 😅</p>
+<% } %>
+
+<div class="hb-grid">
 <% games.forEach(g => { %>
-<div class="game-box">
-    <div>
-        <strong><%= g.title %></strong><br>
-        <small><%= g.genres %></small>
+<article class="hb-card">
+    <img class="hb-card-img" src="<%= g.imageUrl %>">
+    <div class="hb-card-info">
+        <h3><%= g.title %></h3>
+        <p><%= g.genres %></p>
+        <a target="_blank" href="<%= g.link %>" class="hb-button-primary">▶</a>
     </div>
-    <img src="<%= g.imageUrl %>">
-    <form action="/admin/delete/<%= g.id %>?token=<%= token %>" method="POST">
-        <button class="del-btn">Șterge ❌</button>
-    </form>
-</div>
+</article>
 <% }) %>
+</div>
+
+<script>
+function toggleMode() {
+    const m = document.querySelector('input[name="mode"]:checked').value;
+    steamForm.style.display = m === "steam" ? "block" : "none";
+    manualForm.style.display = m === "manual" ? "block" : "none";
+}
+</script>
 
 </body>
 </html>

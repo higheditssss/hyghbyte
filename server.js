@@ -1,14 +1,18 @@
 const express = require("express");
 const fs = require("fs-extra");
 const path = require("path");
+const dotenv = require("dotenv");
+dotenv.config();
+const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 const DB_FILE = "./db.json";
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "HyghByteSecured_8912";
 
-app.use(express.static("public"));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -17,9 +21,9 @@ if (!fs.existsSync(DB_FILE)) {
 }
 
 const loadDB = () => fs.readJsonSync(DB_FILE);
-const saveDB = (data) => fs.writeJsonSync(DB_FILE, data, { spaces: 2 });
+const saveDB = (db) => fs.writeJsonSync(DB_FILE, db, { spaces: 2 });
 
-// HOME
+// Home page
 app.get("/", (req, res) => {
     const db = loadDB();
     res.render("index", {
@@ -28,49 +32,58 @@ app.get("/", (req, res) => {
     });
 });
 
-// ADMIN UI
+// Admin Panel
 app.get("/admin", (req, res) => {
     const token = req.query.token;
-    if (token !== ADMIN_TOKEN) return res.status(401).send("Access Denied 🚫");
+    if (token !== ADMIN_TOKEN) return res.status(403).send("Not Found 🤯");
 
     const db = loadDB();
     res.render("admin", {
         games: db.games,
-        token: token
+        token
     });
 });
 
-// ADD GAME
-app.post("/admin/add", (req, res) => {
+// Add game
+app.post("/admin/add", async (req, res) => {
     const token = req.query.token;
-    if (token !== ADMIN_TOKEN) return res.status(401).send("Unauthorized");
+    if (token !== ADMIN_TOKEN) return res.status(403).send("Unauthorized");
 
     const db = loadDB();
-    const newGame = {
-        id: Date.now(),
-        title: req.body.title,
-        genres: req.body.genres,
-        imageUrl: req.body.imageUrl,
-        link: req.body.link
-    };
 
-    db.games.push(newGame);
-    if (req.body.featured) db.featured.push(newGame);
+    if (req.body.source === "steam") {
+        const appId = req.body.steamId;
+        try {
+            const response = await fetch(`https://store.steampowered.com/api/appdetails?appids=${appId}`);
+            const data = await response.json();
+            const app = data[appId].data;
 
-    saveDB(db);
-    res.redirect("/admin?token=" + token);
-});
+            const newGame = {
+                id: Date.now(),
+                title: app.name,
+                genres: app.genres?.map(g => g.description).join(", ") || "Unknown",
+                imageUrl: app.header_image,
+                link: `https://store.steampowered.com/app/${appId}`
+            };
 
-// DELETE GAME
-app.post("/admin/delete/:id", (req, res) => {
-    const token = req.query.token;
-    if (token !== ADMIN_TOKEN) return res.status(401).send("Unauthorized");
+            db.games.push(newGame);
+            db.featured.push(newGame);
 
-    const db = loadDB();
-    const id = Number(req.params.id);
+        } catch (err) {
+            console.log("Steam fetch error:", err);
+        }
+    } else {
+        const newGame = {
+            id: Date.now(),
+            title: req.body.title,
+            genres: req.body.genres,
+            imageUrl: req.body.imageUrl,
+            link: req.body.link
+        };
 
-    db.games = db.games.filter(g => g.id !== id);
-    db.featured = db.featured.filter(g => g.id !== id);
+        db.games.push(newGame);
+        if (req.body.featured) db.featured.push(newGame);
+    }
 
     saveDB(db);
     res.redirect("/admin?token=" + token);
@@ -78,4 +91,4 @@ app.post("/admin/delete/:id", (req, res) => {
 
 app.get("*", (req, res) => res.status(404).send("Not Found 😳"));
 
-app.listen(PORT, () => console.log("Running on port " + PORT));
+app.listen(PORT, () => console.log("🚀 Running on port " + PORT));
