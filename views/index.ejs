@@ -3,86 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <title>HYGHBYTE // GAME VAULT</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/styles.css">
 </head>
 
 <body>
 
 <header class="hb-header">
-  <div class="hb-header-left">
-    <a href="/" class="hb-logo-main">HYGHBYTE</a>
-    <span class="hb-logo-sub">BETA</span>
-  </div>
-
-  <div class="hb-header-right">
-    <input id="searchInput" class="hb-search" type="text" placeholder="🔍 Caută jocuri...">
-    <button id="caseBtn" class="hb-random-btn">RANDOM</button>
-  </div>
+  <a href="/" class="hb-logo-main">HYGHBYTE</a>
+  <span class="hb-logo-sub">GAME VAULT</span>
 </header>
 
 <main class="hb-main">
 
-  <% if (featuredGames && featuredGames.length > 0) { %>
+  <% if (featuredGames.length > 0) { %>
   <section class="featured-section">
-    <h2 class="featured-title">JOCURI SUGERATE</h2>
+    <h2>JOCURI SUGERATE</h2>
 
     <div class="featured-slider">
-      <button id="featured-prev" class="featured-arrow">❮</button>
 
-      <div class="featured-container single">
-        <div id="featured-active" class="featured-slide active">
-          <img id="featured-bg" class="featured-img-bg" src="">
-          <div class="featured-info">
-            <img id="featured-cover" class="featured-cover" src="">
-            <div class="featured-text">
-              <h3 id="featured-title"></h3>
-              <p id="featured-genres"></p>
-              <a id="featured-link" target="_blank" class="featured-play-now">▶ Joacă acum</a>
-            </div>
+      <button id="prev" class="featured-arrow">❮</button>
+
+      <div class="featured-slide">
+        <img id="featured-bg" class="featured-img-bg">
+        <div class="featured-info">
+          <img id="featured-cover" class="featured-cover">
+          <div class="featured-text">
+            <h3 id="featured-title"></h3>
+            <p id="featured-genres"></p>
+            <a id="featured-link" target="_blank" class="featured-play-now">▶ Joacă acum</a>
           </div>
         </div>
       </div>
 
-      <button id="featured-next" class="featured-arrow">❯</button>
+      <button id="next" class="featured-arrow">❯</button>
     </div>
   </section>
   <% } %>
 
-
   <section class="hb-grid">
     <% games.forEach(g => { %>
-    <article class="hb-card" data-title="<%= g.title.toLowerCase() %>">
-      <img src="<%= g.imageUrl || '/fallback.jpg' %>" class="hb-card-img">
-      <div class="hb-card-info">
-        <h3><%= g.title %></h3>
-        <p><%= g.genres %></p>
-        <a href="<%= g.link %>" target="_blank" class="hb-button-primary">▶ Joacă acum</a>
-      </div>
-    </article>
+      <article class="hb-card">
+        <img src="<%= g.imageUrl %>" class="hb-card-img">
+        <div class="hb-card-info">
+          <h3><%= g.title %></h3>
+          <p><%= g.genres %></p>
+          <a href="<%= g.link %>" target="_blank" class="hb-button-primary">▶ Joacă acum</a>
+        </div>
+      </article>
     <% }) %>
   </section>
 
 </main>
 
-
-<!-- RANDOM GAME POPUP -->
-<div id="gamePopup" class="popup hidden">
-  <div class="popup-blur"></div>
-  <div class="popup-content">
-    <img id="popup-img" class="popup-img">
-    <h2 id="popup-title" class="popup-title"></h2>
-    <p id="popup-genres"></p>
-    <a id="popup-play" class="popup-play-btn" target="_blank">▶ Joacă acum</a>
-    <button onclick="closePopup()" class="popup-close-btn">×</button>
-  </div>
-</div>
-
 <script>
 const featuredGames = <%- JSON.stringify(featuredGames) %>;
-const games = <%- JSON.stringify(games) %>;
 </script>
-
 <script src="/script.js"></script>
 
 </body>
