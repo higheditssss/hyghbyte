@@ -1,7 +1,7 @@
 const express = require("express");
 const fs = require("fs-extra");
 const path = require("path");
-const fetch = (...args) => import("node-fetch").then(({default: fetch}) => fetch(...args));
+const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -20,7 +20,7 @@ if (!fs.existsSync(DB_FILE)) {
 const loadDB = () => fs.readJsonSync(DB_FILE);
 const saveDB = (db) => fs.writeJsonSync(DB_FILE, db, { spaces: 2 });
 
-// Security check
+// Token verification
 function requireToken(req, res, next) {
     if (req.query.token === ADMIN_TOKEN) return next();
     return res.status(403).send("Forbidden 😳");
@@ -33,26 +33,31 @@ app.get("/", (req, res) => {
     res.render("index", { featuredGames, games: db.games });
 });
 
-// Admin Panel
+// Admin Page
 app.get("/admin", requireToken, (req, res) => {
     const db = loadDB();
     res.render("admin", { games: db.games, token: ADMIN_TOKEN });
 });
 
-// Add game
+// Add game route
 app.post("/admin/add", requireToken, async (req, res) => {
     const db = loadDB();
     let game = {};
 
     if (req.body.platform === "steam") {
-        const appId = req.body.steamId;
+        const appId = req.body.steamId?.trim();
+        if (!appId) return res.send("❌ Steam ID invalid!");
+
         try {
             const response = await fetch(`https://store.steampowered.com/api/appdetails?appids=${appId}`);
-            const data = await response.json();
-            
-            if (!data[appId]?.success) throw new Error("Invalid Steam ID");
+            const result = await response.json();
+            const data = result[appId];
 
-            const info = data[appId].data;
+            if (!data?.success) {
+                return res.send("❌ Steam ID invalid sau joc inexistent!");
+            }
+
+            const info = data.data;
             game = {
                 id: Date.now(),
                 title: info.name,
@@ -60,9 +65,11 @@ app.post("/admin/add", requireToken, async (req, res) => {
                 imageUrl: info.header_image,
                 link: `https://store.steampowered.com/app/${appId}/`
             };
+
         } catch (err) {
-            return res.send("❌ Steam ID invalid!");
+            return res.send("🥲 Eroare la Steam API!");
         }
+
     } else {
         game = {
             id: Date.now(),
@@ -78,7 +85,7 @@ app.post("/admin/add", requireToken, async (req, res) => {
     res.redirect("/admin?token=" + ADMIN_TOKEN);
 });
 
-// Set Featured
+// Featured select
 app.post("/admin/feature", requireToken, (req, res) => {
     const db = loadDB();
     const id = parseInt(req.body.id);
@@ -91,7 +98,7 @@ app.post("/admin/feature", requireToken, (req, res) => {
 app.post("/admin/delete", requireToken, (req, res) => {
     const db = loadDB();
     const id = parseInt(req.body.id);
-
+    
     db.games = db.games.filter(g => g.id !== id);
     db.featured = db.featured.filter(f => f !== id);
 
@@ -99,6 +106,7 @@ app.post("/admin/delete", requireToken, (req, res) => {
     res.redirect("/admin?token=" + ADMIN_TOKEN);
 });
 
+// 404 route
 app.get("*", (_, res) => res.status(404).send("Not Found 😳"));
 
 app.listen(PORT, () => console.log("SERVER ONLINE on " + PORT));
