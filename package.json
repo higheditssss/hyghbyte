@@ -1,6 +1,6 @@
 {
   "name": "hyghbyte",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "HYGHBYTE GAME VAULT",
   "main": "server.js",
   "scripts": {
@@ -9,10 +9,9 @@
   "engines": {
     "node": ">=18"
   },
- "dependencies": {
-	"express": "^4.18.2",
-	"ejs": "^3.1.9",
-	"fs-extra": "^11.2.0",
-	"node-fetch": "^2.6.9"
-}
+  "dependencies": {
+    "express": "^4.18.2",
+    "ejs": "^3.1.9",
+    "fs-extra": "^11.2.0"
+  }
 }
