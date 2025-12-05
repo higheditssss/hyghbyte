@@ -2,58 +2,59 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
-<title>Admin - HYGHBYTE</title>
-<link rel="stylesheet" href="/styles.css">
-<script defer src="/admin.js"></script>
+<title>Admin Panel 🎮</title>
+<style>
+    body { background:#0d0d0d; color:#fff; font-family:Arial; padding:25px; }
+    input, button, select {
+        width:100%; padding:10px; margin:6px 0;
+        border-radius:8px; border:none; font-size:15px;
+    }
+    button {
+        background:#e50914; color:white; font-weight:700;
+        cursor:pointer; transition:.2s;
+    }
+    button:hover { background:#b20710; }
+    .block { margin-bottom:30px; }
+    .game-box {
+        background:#151515; padding:12px; border-radius:10px;
+        margin:8px 0;
+    }
+</style>
 </head>
+<body>
 
-<body class="admin-page">
+<h1>Adaugă joc 🎮</h1>
 
-<h1>Adaugă joc nou 🎮</h1>
-
-<form action="/admin/add-game" method="POST">
-
-  <label>Tip joc:</label>
-  <select name="type" id="typeSelect" required>
-    <option value="steam">Steam</option>
-    <option value="manual">Itch.io / Altceva</option>
-  </select>
-
-  <!-- STEAM ONLY -->
-  <div id="steamFields">
-    <label>Steam App ID:</label>
-    <input type="text" name="steamId" placeholder="Ex: 730">
-  </div>
-
-  <!-- MANUAL INPUT -->
-  <div id="manualFields" style="display:none;">
-    <input name="title" placeholder="Nume joc">
-    <input name="genres" placeholder="Genuri (ex: Horror, Indie)">
-    <input name="imageUrl" placeholder="Imagine URL">
-    <input name="link" placeholder="Link joc">
-  </div>
-
-  <label>Featured ⭐</label>
-  <input type="checkbox" name="featured">
-
-  <button type="submit" class="admin-btn">💾 Salvează joc</button>
+<form method="POST" action="/admin/add?token=<%= token %>">
+    <input type="text" name="title" placeholder="Nume joc" required>
+    <input type="text" name="genres" placeholder="Genuri (ex: Horror, Indie)" required>
+    <input type="text" name="imageUrl" placeholder="URL poză joc" required>
+    <input type="text" name="link" placeholder="Link joc (Steam / Itch)">
+    <button type="submit">💾 Salvează joc</button>
 </form>
 
-<hr>
+<hr style="margin:30px 0;">
 
+<h2>Setează Featured ⭐</h2>
+
+<form method="POST" action="/admin/feature?token=<%= token %>">
+    <select name="id" required>
+        <% games.forEach(g => { %>
+            <option value="<%= g.id %>"><%= g.title %></option>
+        <% }) %>
+    </select>
+    <button type="submit">⭐ Setează Featured</button>
+</form>
+
+<hr style="margin:30px 0;">
 <h2>Jocuri existente</h2>
-<div class="admin-list">
-  <% db.games.forEach(g => { %>
-    <div class="admin-item">
-      <img src="<%= g.imageUrl %>" width="70">
-      <strong><%= g.title %></strong>
-      <form action="/admin/delete" method="POST" style="display:inline;">
-        <input type="hidden" name="id" value="<%= g.id %>">
-        <button class="del-btn">🗑️ Șterge</button>
-      </form>
-    </div>
-  <% }) %>
+
+<% games.forEach(g => { %>
+<div class="game-box">
+    <strong><%= g.title %></strong><br>
+    <span><%= g.genres %></span>
 </div>
+<% }) %>
 
 </body>
 </html>
