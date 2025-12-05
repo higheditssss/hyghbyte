@@ -2,36 +2,55 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
-<title>Admin Panel 🎮</title>
+<title>Admin - HYGHBYTE</title>
 <link rel="stylesheet" href="/styles.css">
+<script defer src="/admin.js"></script>
 </head>
 
-<body class="hb-main">
+<body class="admin-page">
 
 <h1>Adaugă joc nou 🎮</h1>
 
-<form action="/admin/add?token=<%= token %>" method="POST" class="form-block">
+<form action="/admin/add-game" method="POST">
 
-  <input name="title" placeholder="Nume joc" required>
-  <input name="genres" placeholder="Genuri (ex: Horror, Indie)" required>
-  <input name="imageUrl" placeholder="Imagine URL" required>
-  <input name="link" placeholder="Link joc" required>
+  <label>Tip joc:</label>
+  <select name="type" id="typeSelect" required>
+    <option value="steam">Steam</option>
+    <option value="manual">Itch.io / Altceva</option>
+  </select>
 
-  <label style="font-size:14px;margin-top:8px;">
-    <input type="checkbox" name="featured"> Adaugă la Featured ⭐
-  </label>
+  <!-- STEAM ONLY -->
+  <div id="steamFields">
+    <label>Steam App ID:</label>
+    <input type="text" name="steamId" placeholder="Ex: 730">
+  </div>
 
-  <button class="hb-button-primary" style="margin-top:10px;">💾 Salvează joc</button>
+  <!-- MANUAL INPUT -->
+  <div id="manualFields" style="display:none;">
+    <input name="title" placeholder="Nume joc">
+    <input name="genres" placeholder="Genuri (ex: Horror, Indie)">
+    <input name="imageUrl" placeholder="Imagine URL">
+    <input name="link" placeholder="Link joc">
+  </div>
+
+  <label>Featured ⭐</label>
+  <input type="checkbox" name="featured">
+
+  <button type="submit" class="admin-btn">💾 Salvează joc</button>
 </form>
 
-<hr style="margin:25px 0;border-color:#333;">
+<hr>
 
 <h2>Jocuri existente</h2>
-
-<div style="margin-top:10px;">
-  <% games.forEach(g => { %>
-    <div style="padding:10px 0;border-bottom:1px solid #333;">
-      <strong><%= g.title %></strong> — <%= g.genres %>
+<div class="admin-list">
+  <% db.games.forEach(g => { %>
+    <div class="admin-item">
+      <img src="<%= g.imageUrl %>" width="70">
+      <strong><%= g.title %></strong>
+      <form action="/admin/delete" method="POST" style="display:inline;">
+        <input type="hidden" name="id" value="<%= g.id %>">
+        <button class="del-btn">🗑️ Șterge</button>
+      </form>
     </div>
   <% }) %>
 </div>
