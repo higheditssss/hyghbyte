@@ -9,11 +9,10 @@
   "engines": {
     "node": ">=18"
   },
-  "dependencies": {
-    "express": "^4.18.2",
-    "ejs": "^3.1.9",
-    "dotenv": "^16.4.5",
-    "fs-extra": "^11.2.0",
-    "node-fetch": "^3.3.2"
-  }
+ "dependencies": {
+	"express": "^4.18.2",
+	"ejs": "^3.1.9",
+	"fs-extra": "^11.2.0",
+	"node-fetch": "^2.6.9"
+}
 }
