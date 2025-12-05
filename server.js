@@ -13,6 +13,7 @@ app.use(express.static("public"));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+// Ensure DB file exists
 if (!fs.existsSync(DB_FILE)) {
     fs.writeJsonSync(DB_FILE, { games: [], featured: [] }, { spaces: 2 });
 }
@@ -20,26 +21,30 @@ if (!fs.existsSync(DB_FILE)) {
 const loadDB = () => fs.readJsonSync(DB_FILE);
 const saveDB = (db) => fs.writeJsonSync(DB_FILE, db, { spaces: 2 });
 
-// Security Token Check
+// Security check
 function requireToken(req, res, next) {
     if (req.query.token === ADMIN_TOKEN) return next();
-    return res.status(403).send("Forbidden 😳");
+    return res.status(403).send("Access Interzis 🔒");
 }
 
-// Home
+// HOME PAGE
 app.get("/", (req, res) => {
     const db = loadDB();
     const featuredGames = db.games.filter(g => db.featured.includes(g.id));
     res.render("index", { games: db.games, featuredGames });
 });
 
-// Admin UI
+// ADMIN PANEL
 app.get("/admin", requireToken, (req, res) => {
     const db = loadDB();
-    res.render("admin", { games: db.games, featured: db.featured, token: ADMIN_TOKEN });
+    res.render("admin", {
+        games: db.games,
+        featured: db.featured,
+        token: ADMIN_TOKEN
+    });
 });
 
-// Add Game (Steam sau manual)
+// ADD GAME
 app.post("/admin/add", requireToken, async (req, res) => {
     const db = loadDB();
     const platform = req.body.platform;
@@ -47,29 +52,24 @@ app.post("/admin/add", requireToken, async (req, res) => {
 
     if (platform === "steam") {
         const appId = req.body.steamId.trim();
-
         try {
             const response = await fetch(
                 `https://store.steampowered.com/api/appdetails?appids=${appId}&cc=us&l=en`
             );
-            const data = await response.json();
-            const info = data[appId]?.data;
-
+            const json = await response.json();
+            const info = json[appId]?.data;
             if (!info) return res.send("❌ Steam ID invalid!");
-
-            const genres = info.genres?.map(g => g.description).join(", ") || "N/A";
 
             game = {
                 id: Date.now(),
                 title: info.name,
-                genres: genres,
+                genres: info.genres?.map(g => g.description).join(", ") || "N/A",
                 imageUrl: info.header_image,
-                link: `https://store.steampowered.com/app/${appId}/`
+                link: `https://store.steampowered.com/app/${appId}`
             };
 
-        } catch (err) {
-            console.log("STEAM API ERROR:", err);
-            return res.send("🥲 Eroare la Steam API!");
+        } catch (e) {
+            return res.send("🥲 Steam API error, încearcă alt ID!");
         }
     } else {
         game = {
@@ -83,31 +83,32 @@ app.post("/admin/add", requireToken, async (req, res) => {
 
     db.games.push(game);
     saveDB(db);
-
     res.redirect("/admin?token=" + ADMIN_TOKEN);
 });
 
-// Set Featured
+// FEATURE MULTIPLE
 app.post("/admin/feature", requireToken, (req, res) => {
     const db = loadDB();
-    const id = parseInt(req.body.id);
-    if (!db.featured.includes(id)) db.featured.push(id);
+    let selected = req.body.ids || [];
+    if (!Array.isArray(selected)) selected = [selected];
+    db.featured = selected.map(id => parseInt(id));
     saveDB(db);
     res.redirect("/admin?token=" + ADMIN_TOKEN);
 });
 
-// Delete Game
+// DELETE GAME
 app.post("/admin/delete", requireToken, (req, res) => {
     const db = loadDB();
     const id = parseInt(req.body.id);
 
-    db.games = db.games.filter(game => game.id !== id);
+    db.games = db.games.filter(g => g.id !== id);
     db.featured = db.featured.filter(fid => fid !== id);
 
     saveDB(db);
     res.redirect("/admin?token=" + ADMIN_TOKEN);
 });
 
-app.get("*", (_, res) => res.status(404).send("Not Found 😳"));
+// FALLBACK 404
+app.get("*", (_, res) => res.status(404).send("404 Not Found 😳"));
 
-app.listen(PORT, () => console.log(`SERVER ONLINE @ ${PORT}`));
+app.listen(PORT, () => console.log("🚀 ONLINE @ PORT", PORT));
