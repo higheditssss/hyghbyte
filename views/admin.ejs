@@ -2,65 +2,39 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
-<title>Admin Panel ✔</title>
+<title>Admin Panel 🎮</title>
 <link rel="stylesheet" href="/styles.css">
 </head>
 
-<body style="background:#0d0d0d;color:#fff;font-family:Arial;padding:20px;">
+<body class="hb-main">
 
 <h1>Adaugă joc nou 🎮</h1>
 
-<div style="margin-bottom:20px;">
-    <label><input type="radio" name="mode" value="steam" checked onclick="toggleMode()"> Steam ID</label>
-    <label style="margin-left:15px;"><input type="radio" name="mode" value="manual" onclick="toggleMode()"> Manual</label>
-</div>
+<form action="/admin/add?token=<%= token %>" method="POST" class="form-block">
 
-<!-- Steam Import -->
-<form id="steamForm" action="/admin/add?token=<%= token %>" method="POST">
-    <input type="hidden" name="source" value="steam">
-    <input type="number" name="steamId" placeholder="Steam AppID (ex: 620)" required>
-    <button type="submit" class="hb-button-primary">🎮 Importă din Steam</button>
+  <input name="title" placeholder="Nume joc" required>
+  <input name="genres" placeholder="Genuri (ex: Horror, Indie)" required>
+  <input name="imageUrl" placeholder="Imagine URL" required>
+  <input name="link" placeholder="Link joc" required>
+
+  <label style="font-size:14px;margin-top:8px;">
+    <input type="checkbox" name="featured"> Adaugă la Featured ⭐
+  </label>
+
+  <button class="hb-button-primary" style="margin-top:10px;">💾 Salvează joc</button>
 </form>
 
-<!-- Manual Add -->
-<form id="manualForm" action="/admin/add?token=<%= token %>" method="POST" style="display:none;margin-top:15px;">
-    <input type="hidden" name="source" value="manual">
-    <input type="text" name="title" placeholder="Nume joc">
-    <input type="text" name="genres" placeholder="Genuri (ex: Horror, Indie)">
-    <input type="url" name="imageUrl" placeholder="Imagine URL">
-    <input type="url" name="link" placeholder="Link joc">
-    <label><input type="checkbox" name="featured"> Featured ⭐</label>
-    <button type="submit" class="hb-button-primary">💾 Salvează joc</button>
-</form>
-
-<hr style="margin:30px 0;border-color:#222;">
+<hr style="margin:25px 0;border-color:#333;">
 
 <h2>Jocuri existente</h2>
 
-<% if (games.length === 0) { %>
-<p>Nu există jocuri încă 😅</p>
-<% } %>
-
-<div class="hb-grid">
-<% games.forEach(g => { %>
-<article class="hb-card">
-    <img class="hb-card-img" src="<%= g.imageUrl %>">
-    <div class="hb-card-info">
-        <h3><%= g.title %></h3>
-        <p><%= g.genres %></p>
-        <a target="_blank" href="<%= g.link %>" class="hb-button-primary">▶</a>
+<div style="margin-top:10px;">
+  <% games.forEach(g => { %>
+    <div style="padding:10px 0;border-bottom:1px solid #333;">
+      <strong><%= g.title %></strong> — <%= g.genres %>
     </div>
-</article>
-<% }) %>
+  <% }) %>
 </div>
-
-<script>
-function toggleMode() {
-    const m = document.querySelector('input[name="mode"]:checked').value;
-    steamForm.style.display = m === "steam" ? "block" : "none";
-    manualForm.style.display = m === "manual" ? "block" : "none";
-}
-</script>
 
 </body>
 </html>
