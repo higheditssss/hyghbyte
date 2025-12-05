@@ -3,58 +3,132 @@
 <head>
 <meta charset="UTF-8">
 <title>Admin Panel 🎮</title>
+
 <style>
-    body { background:#0d0d0d; color:#fff; font-family:Arial; padding:25px; }
+    body {
+        background: #0d0d0d;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        padding: 25px;
+    }
+    h1, h2 { margin-bottom: 12px; }
     input, button, select {
-        width:100%; padding:10px; margin:6px 0;
-        border-radius:8px; border:none; font-size:15px;
+        width: 100%;
+        padding: 12px;
+        margin: 6px 0;
+        border-radius: 8px;
+        border: none;
+        font-size: 15px;
     }
     button {
-        background:#e50914; color:white; font-weight:700;
-        cursor:pointer; transition:.2s;
+        background: #e50914;
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        transition: .2s;
     }
-    button:hover { background:#b20710; }
-    .block { margin-bottom:30px; }
+    button:hover { background: #b20710; }
     .game-box {
-        background:#151515; padding:12px; border-radius:10px;
-        margin:8px 0;
+        background: #151515;
+        padding: 12px;
+        border-radius: 10px;
+        margin: 10px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .delete-btn {
+        width: auto;
+        padding: 6px 14px;
+        background: #8b0000;
+        font-size: 13px;
+    }
+    .delete-btn:hover { background: #a60000 }
+    .section {
+        background: #111;
+        padding: 18px;
+        border-radius: 14px;
+        margin-bottom: 35px;
     }
 </style>
+
+<script>
+function switchPlatform() {
+    const platform = document.getElementById("platform").value;
+    document.getElementById("steamFields").style.display = (platform === "steam") ? "block" : "none";
+    document.getElementById("manualFields").style.display = (platform === "manual") ? "block" : "none";
+}
+</script>
+
 </head>
 <body>
 
-<h1>Adaugă joc 🎮</h1>
+<h1>Admin Panel 🎛</h1>
 
-<form method="POST" action="/admin/add?token=<%= token %>">
-    <input type="text" name="title" placeholder="Nume joc" required>
-    <input type="text" name="genres" placeholder="Genuri (ex: Horror, Indie)" required>
-    <input type="text" name="imageUrl" placeholder="URL poză joc" required>
-    <input type="text" name="link" placeholder="Link joc (Steam / Itch)">
-    <button type="submit">💾 Salvează joc</button>
-</form>
+<!-- ADD GAME -->
+<div class="section">
+    <h2>Adaugă joc nou 🎮</h2>
 
-<hr style="margin:30px 0;">
+    <form method="POST" action="/admin/add?token=<%= token %>">
 
-<h2>Setează Featured ⭐</h2>
+        <select id="platform" name="platform" onchange="switchPlatform()" required>
+            <option value="steam">Steam (auto-fetch)</option>
+            <option value="manual">Manual (Itch.io / altele)</option>
+        </select>
 
-<form method="POST" action="/admin/feature?token=<%= token %>">
-    <select name="id" required>
-        <% games.forEach(g => { %>
-            <option value="<%= g.id %>"><%= g.title %></option>
-        <% }) %>
-    </select>
-    <button type="submit">⭐ Setează Featured</button>
-</form>
+        <!-- Steam -->
+        <div id="steamFields">
+            <input type="number" name="steamId" placeholder="Steam AppID (ex: 620980)">
+        </div>
 
-<hr style="margin:30px 0;">
-<h2>Jocuri existente</h2>
+        <!-- Manual -->
+        <div id="manualFields" style="display:none;">
+            <input type="text" name="title" placeholder="Nume joc">
+            <input type="text" name="genres" placeholder="Genuri (ex: Horror, Indie)">
+            <input type="text" name="imageUrl" placeholder="URL poză joc">
+            <input type="text" name="link" placeholder="Link joc">
+        </div>
 
-<% games.forEach(g => { %>
-<div class="game-box">
-    <strong><%= g.title %></strong><br>
-    <span><%= g.genres %></span>
+        <button type="submit">💾 Salvează joc</button>
+    </form>
 </div>
-<% }) %>
+
+<!-- FEATURED -->
+<div class="section">
+    <h2>Setează Featured ⭐</h2>
+    <form method="POST" action="/admin/feature?token=<%= token %>">
+        <select name="id" required>
+            <% games.forEach(g => { %>
+                <option value="<%= g.id %>"><%= g.title %></option>
+            <% }) %>
+        </select>
+        <button type="submit">⭐ Adaugă la Featured</button>
+    </form>
+</div>
+
+<!-- GAME LIST -->
+<div class="section">
+    <h2>Jocuri existente 🕹</h2>
+
+    <% if (games.length === 0) { %>
+        <p style="opacity:.6;">Nu există jocuri încă 👀</p>
+    <% } %>
+
+    <% games.forEach(g => { %>
+    <div class="game-box">
+        <div>
+            <strong><%= g.title %></strong><br>
+            <span style="opacity:.7;"><%= g.genres %></span>
+        </div>
+
+        <form method="POST" action="/admin/delete?token=<%= token %>">
+            <input type="hidden" name="id" value="<%= g.id %>">
+            <button class="delete-btn">🗑️ Șterge</button>
+        </form>
+    </div>
+    <% }) %>
+
+</div>
 
 </body>
 </html>

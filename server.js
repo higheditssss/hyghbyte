@@ -1,14 +1,15 @@
 const express = require("express");
 const fs = require("fs-extra");
 const path = require("path");
+const fetch = (...args) => import("node-fetch").then(({default: fetch}) => fetch(...args));
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 const DB_FILE = "./db.json";
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "HyghByteSecured_8912";
 
-app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -19,61 +20,85 @@ if (!fs.existsSync(DB_FILE)) {
 const loadDB = () => fs.readJsonSync(DB_FILE);
 const saveDB = (db) => fs.writeJsonSync(DB_FILE, db, { spaces: 2 });
 
-function requireAdmin(req, res, next) {
+// Security check
+function requireToken(req, res, next) {
     if (req.query.token === ADMIN_TOKEN) return next();
-    return res.status(403).send("STOP 🚫");
+    return res.status(403).send("Forbidden 😳");
 }
 
-// HOME PAGE
+// Home Page
 app.get("/", (req, res) => {
     const db = loadDB();
-    res.render("index", {
-        games: db.games,
-        featuredGames: db.featured
-    });
+    const featuredGames = db.games.filter(g => db.featured.includes(g.id));
+    res.render("index", { featuredGames, games: db.games });
 });
 
-// ADMIN PAGE (add game)
-app.get("/admin", requireAdmin, (req, res) => {
+// Admin Panel
+app.get("/admin", requireToken, (req, res) => {
     const db = loadDB();
-    res.render("admin", {
-        token: ADMIN_TOKEN,
-        games: db.games,
-        featuredGames: db.featured
-    });
+    res.render("admin", { games: db.games, token: ADMIN_TOKEN });
 });
 
-// ADD GAME
-app.post("/admin/add", requireAdmin, (req, res) => {
+// Add game
+app.post("/admin/add", requireToken, async (req, res) => {
     const db = loadDB();
-    const { title, genres, imageUrl, link } = req.body;
+    let game = {};
 
-    db.games.push({
-        id: Date.now(),
-        title,
-        genres,
-        imageUrl,
-        link
-    });
+    if (req.body.platform === "steam") {
+        const appId = req.body.steamId;
+        try {
+            const response = await fetch(`https://store.steampowered.com/api/appdetails?appids=${appId}`);
+            const data = await response.json();
+            
+            if (!data[appId]?.success) throw new Error("Invalid Steam ID");
+
+            const info = data[appId].data;
+            game = {
+                id: Date.now(),
+                title: info.name,
+                genres: info.genres?.map(g => g.description).join(", ") || "Unknown",
+                imageUrl: info.header_image,
+                link: `https://store.steampowered.com/app/${appId}/`
+            };
+        } catch (err) {
+            return res.send("❌ Steam ID invalid!");
+        }
+    } else {
+        game = {
+            id: Date.now(),
+            title: req.body.title,
+            genres: req.body.genres,
+            imageUrl: req.body.imageUrl,
+            link: req.body.link
+        };
+    }
+
+    db.games.push(game);
+    saveDB(db);
+    res.redirect("/admin?token=" + ADMIN_TOKEN);
+});
+
+// Set Featured
+app.post("/admin/feature", requireToken, (req, res) => {
+    const db = loadDB();
+    const id = parseInt(req.body.id);
+    if (!db.featured.includes(id)) db.featured.push(id);
+    saveDB(db);
+    res.redirect("/admin?token=" + ADMIN_TOKEN);
+});
+
+// Delete Game
+app.post("/admin/delete", requireToken, (req, res) => {
+    const db = loadDB();
+    const id = parseInt(req.body.id);
+
+    db.games = db.games.filter(g => g.id !== id);
+    db.featured = db.featured.filter(f => f !== id);
 
     saveDB(db);
-    res.redirect(`/admin?token=${ADMIN_TOKEN}`);
+    res.redirect("/admin?token=" + ADMIN_TOKEN);
 });
 
-// SET FEATURED GAME
-app.post("/admin/feature", requireAdmin, (req, res) => {
-    const db = loadDB();
-    const { id } = req.body;
+app.get("*", (_, res) => res.status(404).send("Not Found 😳"));
 
-    const game = db.games.find(g => g.id == id);
-    if (!game) return res.send("Game not found 😢");
-
-    db.featured = [game];
-    saveDB(db);
-
-    res.redirect(`/admin?token=${ADMIN_TOKEN}`);
-});
-
-app.get("*", (req, res) => res.status(404).send("Not Found 😳"));
-
-app.listen(PORT, () => console.log("SERVER ONLINE ON " + PORT));
+app.listen(PORT, () => console.log("SERVER ONLINE on " + PORT));
